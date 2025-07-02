@@ -22,3 +22,45 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Build diretórios
+/bin/
+/obj/
+
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio
+.vs/
+
+# JetBrains Rider / IDEA
+.idea/
+
+# Arquivos de configuração de ambiente
+.env
+appsettings.Development.json
+
+# Logs
+*.log
+logs/
+
+# Pacotes
+*.nupkg
+*.snupkg
+
+# Node.js (frontend)
+frontend/node_modules/
+/frontend/vendinha-interfocus/node_modules/
+
+# VS Code
+.vscode/
+
+# Publicação
+/publish/
+/artifacts/
+
+# Outros
+.DS_Store
+Thumbs.db

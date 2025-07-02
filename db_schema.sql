@@ -16,3 +16,7 @@ CREATE TABLE divida (
                         descricao VARCHAR(255)
 );
 
+ALTER TABLE divida RENAME TO dividas;
+
+ALTER SEQUENCE cliente_id_seq RENAME TO clientes_id_seq;
+ALTER SEQUENCE divida_id_seq   RENAME TO dividas_id_seq;
