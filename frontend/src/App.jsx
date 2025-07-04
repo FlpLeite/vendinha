@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Store, Users, BarChart3 } from 'lucide-react'
-import Dashboard from './components/Dashboard'
-import ClientesList from './components/ClientesList'
+import Dashboard from './Pages/Dashboard/Dashboard'
+import ClientesList from './Pages/Clientes/ClientesList'
 import ClienteForm from './components/ClienteForm'
 import DividaForm from './components/DividaForm'
 

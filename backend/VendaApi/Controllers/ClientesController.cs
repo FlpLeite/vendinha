@@ -15,20 +15,57 @@ namespace VendaApi.Controllers
         public ClientesController(NHibernate.ISession session) => _session = session;
 
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll(
+        [FromQuery] int page = 1,
+        [FromQuery] string? name = null)
         {
-            var dtos = _session.Query<Clientes>()
-                .Select(c => new ClientesDto
-                {
-                    Id = c.Id,
-                    NomeCompleto = c.NomeCompleto,
-                    Cpf = c.Cpf,
-                    DataNascimento = c.DataNascimento,
-                    Email = c.Email
-                })
-                .ToList();
-            return Ok(dtos);
+            const int pageSize = 10;
+
+            var query = _session.Query<Clientes>();
+            if (!string.IsNullOrWhiteSpace(name))
+                query = query.Where(c =>
+                    c.NomeCompleto.ToLower()
+                     .Contains(name.ToLower()));
+
+            var projected = query
+              .Select(c => new ClientesListDto
+              {
+                  Id = c.Id,
+                  NomeCompleto = c.NomeCompleto,
+                  Cpf = c.Cpf,
+                  DataNascimento = c.DataNascimento,
+                  Email = c.Email,
+                  Age = (int)(
+                    DateTime.Today.Subtract(c.DataNascimento).TotalDays / 365.2425
+                  ),
+                  TotalDebt = _session.Query<Dividas>()
+                    .Where(d => d.Cliente.Id == c.Id && !d.Situacao)
+                    .Select(d => d.Valor)
+                    .DefaultIfEmpty(0m)
+                    .Sum()
+              });
+
+            var items = projected
+              .OrderByDescending(x => x.TotalDebt)
+              .Skip((page - 1) * pageSize)
+              .Take(pageSize)
+              .ToList();
+
+            var totalDebtSum = _session.Query<Dividas>()
+              .Where(d => !d.Situacao)
+              .Select(d => d.Valor)
+              .DefaultIfEmpty(0m)
+              .Sum();
+
+            return Ok(new
+            {
+                Page = page,
+                PageSize = pageSize,
+                Items = items,
+                TotalDebtSum = totalDebtSum
+            });
         }
+
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
@@ -36,7 +73,7 @@ namespace VendaApi.Controllers
             var c = _session.Get<Clientes>(id);
             if (c == null) return NotFound();
 
-            var dto = new ClientesDto
+            var dto = new ClientesDTO
             {
                 Id = c.Id,
                 NomeCompleto = c.NomeCompleto,
@@ -48,7 +85,7 @@ namespace VendaApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] ClientesDto dto)
+        public IActionResult Create([FromBody] ClientesDTO dto)
         {
             var c = new Clientes
             {
@@ -67,7 +104,7 @@ namespace VendaApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] ClientesDto dto)
+        public IActionResult Update(int id, [FromBody] ClientesDTO dto)
         {
             var c = _session.Get<Clientes>(id);
             if (c == null) return NotFound();

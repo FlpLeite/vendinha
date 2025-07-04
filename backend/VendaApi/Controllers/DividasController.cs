@@ -22,7 +22,7 @@ namespace VendaApi.Controllers
 
             var dtos = _session.Query<Dividas>()
                 .Where(d => d.Cliente.Id == clienteId)
-                .Select(d => new DividasDto
+                .Select(d => new DividasDTO
                 {
                     Id = d.Id,
                     Valor = d.Valor,
@@ -43,7 +43,7 @@ namespace VendaApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(int clienteId, [FromBody] DividasDto dto)
+        public IActionResult Create(int clienteId, [FromBody] DividasDTO dto)
         {
             var cliente = _session.Get<Clientes>(clienteId);
             if (cliente == null)
@@ -93,7 +93,7 @@ namespace VendaApi.Controllers
             _session.Update(d);
             tx.Commit();
 
-            var dto = new DividasDto
+            var dto = new DividasDTO
             {
                 Id = d.Id,
                 Valor = d.Valor,
