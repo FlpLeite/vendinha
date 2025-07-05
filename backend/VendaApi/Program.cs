@@ -1,7 +1,7 @@
 using NHibernate;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
-using VendaApi.Mappings; // Ajuste o namespace conforme a pasta dos seus Maps
+using VendaApi.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +38,8 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader()
               .AllowAnyMethod());
 });
+
+builder.Services.AddScoped<IClientesService, ClientesService>();
 
 var app = builder.Build();
 

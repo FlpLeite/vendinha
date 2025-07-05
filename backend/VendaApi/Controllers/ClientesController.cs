@@ -20,7 +20,7 @@ namespace VendaApi.Controllers
         [FromQuery] int page = 1,
         [FromQuery] string? name = null)
         {
-            const int pageSize = 10;
+            const int pageSize = 9;
 
             var query = _session.Query<Clientes>();
             if (!string.IsNullOrWhiteSpace(name))
@@ -94,7 +94,7 @@ namespace VendaApi.Controllers
                 NomeCompleto = dto.NomeCompleto,
                 Cpf = dto.Cpf,
                 DataNascimento = dto.DataNascimento,
-                Email = dto.Email
+                Email = string.IsNullOrEmpty(dto.Email) ? null : dto.Email
             };
 
             using var tx = _session.BeginTransaction();

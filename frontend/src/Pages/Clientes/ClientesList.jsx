@@ -1,4 +1,3 @@
-// src/components/ClientesList.jsx
 import React, { useEffect, useState } from 'react'
 import { Search, Plus, User, Phone, MapPin, Calendar } from 'lucide-react'
 import { listarClientes } from '../../services/clienteService'
@@ -27,7 +26,6 @@ export default function ClientesList({ onNovoCliente, onClienteSelect }) {
     }
 
     useEffect(() => {
-        // debounce de 500ms para não bombardear a API
         const timeout = setTimeout(fetchClientes, 500)
         return () => clearTimeout(timeout)
     }, [busca, page])
@@ -38,7 +36,6 @@ export default function ClientesList({ onNovoCliente, onClienteSelect }) {
     )
 
     const getValorPendente = id =>
-        // se seu JSON já traz totalDebt, pode usar c.totalDebt
         clientes
             .find(c => c.id === id)
             ?.totalDebt ?? 0
@@ -112,7 +109,7 @@ export default function ClientesList({ onNovoCliente, onClienteSelect }) {
                                         )}
                                         <div className="flex items-center gap-2">
                                             <Calendar className="h-4 w-4" />
-                                            Desde{' '}
+                                            Data de nascimento{' '}
                                             {new Date(c.dataNascimento).toLocaleDateString('pt-BR')}
                                         </div>
                                     </div>

@@ -1,4 +1,3 @@
-// src/components/ClienteForm.jsx
 import React, { useState } from 'react';
 import { criarCliente } from '../services/clienteService';
 
@@ -6,12 +5,11 @@ export default function ClienteForm({ onSave, onCancel }) {
     const [nomeCompleto, setNomeCompleto] = useState('');
     const [cpf, setCpf]                   = useState('');
     const [dataNascimento, setDataNascimento] = useState('');
-    const [email, setEmail]               = useState('');
+    const [email, setEmail]               = useState(null);
     const [submetendo, setSubmetendo]     = useState(false);
 
     const handleSubmit = async e => {
         e.preventDefault();
-        // validação simples de HTML5
         const form = e.target;
         if (!form.reportValidity()) return;
 
@@ -24,7 +22,7 @@ export default function ClienteForm({ onSave, onCancel }) {
                 email,
             });
             if (status === 201 || status === 200) {
-                onSave(data); // data contém o cliente criado (com id)
+                onSave(data);
             } else {
                 alert('Erro ao criar cliente');
             }
@@ -92,7 +90,7 @@ export default function ClienteForm({ onSave, onCancel }) {
                     <input
                         type="email"
                         value={email}
-                        onChange={e => setEmail(e.target.value)}
+                        onChange={e => setEmail(e.target.value === '' ? null : e.currentTarget.value )}
                         className="w-full bg-gray-700 p-2 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                 </div>

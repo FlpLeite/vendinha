@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using NHibernate;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using VendaApi.Models;
 using VendaApi.Models.Dtos;
-using System.Linq;
+using VendaApi.Services;
 
 namespace VendaApi.Controllers
 {
@@ -10,8 +12,16 @@ namespace VendaApi.Controllers
     [Route("clientes/{clienteId}/[controller]")]
     public class DividasController : ControllerBase
     {
+        private readonly IClientesService _clientesService;
         private readonly NHibernate.ISession _session;
-        public DividasController(NHibernate.ISession session) => _session = session;
+
+        public DividasController(
+            IClientesService clientesService,
+            NHibernate.ISession session)
+        {
+            _clientesService = clientesService;
+            _session = session;
+        }
 
         [HttpGet]
         public IActionResult GetAll(int clienteId)
@@ -43,40 +53,40 @@ namespace VendaApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(int clienteId, [FromBody] DividasDTO dto)
+        public async Task<IActionResult> Create(int clienteId, [FromBody] DividasDTO dto)
         {
-            var cliente = _session.Get<Clientes>(clienteId);
-            if (cliente == null)
-                return NotFound($"Cliente {clienteId} não encontrado.");
-
-            var somaEmAberto = _session.Query<Dividas>()
-                .Where(d => d.Cliente.Id == clienteId && !d.Situacao)
-                .Sum(d => d.Valor);
-
-            if (somaEmAberto + dto.Valor > 200m)
-                return BadRequest($"Limite de R$200,00 ultrapassado. Em aberto: {somaEmAberto:C2}.");
-
-            var d = new Dividas
+            try
             {
-                Cliente = cliente,
-                Valor = dto.Valor,
-                Situacao = false,
-                DataCriacao = DateTime.UtcNow,
-                DataPagamento = null,
-                Descricao = dto.Descricao
-            };
-            using var tx = _session.BeginTransaction();
-            _session.Save(d);
-            tx.Commit();
+                var novaDivida = new Dividas
+                {
+                    Valor = dto.Valor,
+                    Descricao = dto.Descricao
+                };
 
-            dto.Id = d.Id;
-            dto.Situacao = d.Situacao;
-            dto.DataCriacao = d.DataCriacao;
-            dto.DataPagamento = d.DataPagamento;
+                var criada = await _clientesService.CriarDividaAsync(clienteId, novaDivida);
 
-            return CreatedAtAction(nameof(GetAll), new { clienteId }, dto);
+                var resultDto = new DividasDTO
+                {
+                    Id = criada.Id,
+                    Valor = criada.Valor,
+                    Situacao = criada.Situacao,
+                    DataCriacao = criada.DataCriacao,
+                    DataPagamento = criada.DataPagamento,
+                    Descricao = criada.Descricao
+                };
+
+                return CreatedAtAction(nameof(GetAll), new { clienteId }, resultDto);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-        
+
         [HttpPut("{id}/pagar")]
         public IActionResult MarcarComoPaga(int clienteId, int id)
         {
@@ -89,6 +99,7 @@ namespace VendaApi.Controllers
 
             d.Situacao = true;
             d.DataPagamento = DateTime.UtcNow;
+
             using var tx = _session.BeginTransaction();
             _session.Update(d);
             tx.Commit();
