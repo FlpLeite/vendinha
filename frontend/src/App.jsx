@@ -146,8 +146,6 @@ function App() {
 
                 {telaAtiva === 'clientes' && (
                     <ClientesList
-                        clientes={clientes}
-                        dividas={dividas}
                         onClienteSelect={handleNovaDivida}
                         onNovoCliente={() => setMostrarFormCliente(true)}
                     />

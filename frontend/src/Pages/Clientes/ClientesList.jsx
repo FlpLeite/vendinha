@@ -1,29 +1,24 @@
 // src/components/ClientesList.jsx
 import React, { useEffect, useState } from 'react'
 import { Search, Plus, User, Phone, MapPin, Calendar } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { listarClientes } from '../../services/clienteService'
 
-export default function ClientesList({ onNovoCliente }) {
+export default function ClientesList({ onNovoCliente, onClienteSelect }) {
     const [clientes, setClientes]       = useState([])
     const [busca, setBusca]             = useState('')
     const [page, setPage]               = useState(1)
     const [totalDebtSum, setTotalDebtSum] = useState(0)
     const [loading, setLoading]         = useState(false)
-    const navigate = useNavigate()
-    const baseUrl  = import.meta.env.VITE_API_URL || 'http://localhost:5057'
 
-    // Função que chama a API
     const fetchClientes = async () => {
         setLoading(true)
         try {
-            const res  = await fetch(
-                `${baseUrl}/clientes?page=${page}&name=${encodeURIComponent(busca)}`
-            )
-            const json = await res.json()
-            // dependendo do JSON que seu back retorna:
-            // json.items ou json.Items
-            setClientes(json.items ?? json.Items ?? [])
-            setTotalDebtSum(json.totalDebtSum ?? json.TotalDebtSum ?? 0)
+            const resultado = await listarClientes(busca, page)
+            if (resultado.status === 200) {
+                const json = resultado.data
+                setClientes(json.items ?? json.Items ?? [])
+                setTotalDebtSum(json.totalDebtSum ?? json.TotalDebtSum ?? 0)
+            }
         } catch (err) {
             console.error('Erro ao buscar clientes:', err)
         } finally {
@@ -31,20 +26,17 @@ export default function ClientesList({ onNovoCliente }) {
         }
     }
 
-    // Re-fetch sempre que muda busca ou página
     useEffect(() => {
         // debounce de 500ms para não bombardear a API
         const timeout = setTimeout(fetchClientes, 500)
         return () => clearTimeout(timeout)
     }, [busca, page])
 
-    // Filtra localmente (caso queira)
     const filtrados = clientes.filter(c =>
         c.nomeCompleto.toLowerCase().includes(busca.toLowerCase()) ||
         (c.telefone && c.telefone.includes(busca))
     )
 
-    // Calcula total pendente por cliente (caso precise)
     const getValorPendente = id =>
         // se seu JSON já traz totalDebt, pode usar c.totalDebt
         clientes
@@ -53,7 +45,6 @@ export default function ClientesList({ onNovoCliente }) {
 
     return (
         <div className="space-y-6">
-            {/* Header + Novo Cliente */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h2 className="text-2xl font-bold text-white">Clientes</h2>
                 <button
@@ -65,7 +56,6 @@ export default function ClientesList({ onNovoCliente }) {
                 </button>
             </div>
 
-            {/* Barra de busca */}
             <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
@@ -74,7 +64,7 @@ export default function ClientesList({ onNovoCliente }) {
                     value={busca}
                     onChange={e => {
                         setBusca(e.target.value)
-                        setPage(1) // resetar página ao buscar
+                        setPage(1)
                     }}
                     className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-emerald-500 text-white placeholder-gray-400 duration-200"
                 />
@@ -84,17 +74,15 @@ export default function ClientesList({ onNovoCliente }) {
                 <p className="text-white">Carregando clientes…</p>
             ) : (
                 <>
-                    {/* Grid de cards */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filtrados.map(c => {
                             const pendente = c.totalDebt ?? getValorPendente(c.id)
                             return (
                                 <div
                                     key={c.id}
-                                    onClick={() => navigate(`/clientes/${c.id}/dividas`)}
+                                    onClick={() => onClienteSelect(c.id)}
                                     className="bg-gray-800 rounded-xl shadow-lg border border-gray-700 p-6 cursor-pointer hover:shadow-xl hover:border-emerald-500 duration-200 hover:-translate-y-1"
                                 >
-                                    {/* Ícone e badge */}
                                     <div className="flex justify-between items-start mb-4">
                                         <div className="bg-emerald-600 p-3 rounded-lg shadow-lg">
                                             <User className="h-6 w-6 text-white" />
@@ -106,7 +94,6 @@ export default function ClientesList({ onNovoCliente }) {
                                         )}
                                     </div>
 
-                                    {/* Dados do cliente */}
                                     <h3 className="text-lg font-semibold text-white mb-2">
                                         {c.nomeCompleto}
                                     </h3>
@@ -130,7 +117,6 @@ export default function ClientesList({ onNovoCliente }) {
                                         </div>
                                     </div>
 
-                                    {/* Footer com total */}
                                     <div className="border-t border-gray-700 pt-4 text-sm">
                                         <div className="flex justify-between text-gray-400">
                                             <span>Total de dívidas:</span>
@@ -154,7 +140,6 @@ export default function ClientesList({ onNovoCliente }) {
                         })}
                     </div>
 
-                    {/* Paginação e soma total */}
                     <div className="mt-4 flex flex-col md:flex-row justify-between items-center">
                         <div className="space-x-2">
                             <button

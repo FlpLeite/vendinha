@@ -14,6 +14,7 @@ namespace VendaApi.Controllers
 
         public ClientesController(NHibernate.ISession session) => _session = session;
 
+
         [HttpGet]
         public IActionResult GetAll(
         [FromQuery] int page = 1,
@@ -36,13 +37,15 @@ namespace VendaApi.Controllers
                   DataNascimento = c.DataNascimento,
                   Email = c.Email,
                   Age = (int)(
-                    DateTime.Today.Subtract(c.DataNascimento).TotalDays / 365.2425
-                  ),
+                                      DateTime.Today
+                                        .Subtract(c.DataNascimento)
+                                        .TotalDays
+                                      / 365.2425
+                                   ),
                   TotalDebt = _session.Query<Dividas>()
-                    .Where(d => d.Cliente.Id == c.Id && !d.Situacao)
-                    .Select(d => d.Valor)
-                    .DefaultIfEmpty(0m)
-                    .Sum()
+                                     .Where(d => d.Cliente.Id == c.Id && !d.Situacao)
+                                     .Sum(d => (decimal?)d.Valor)
+                                   ?? 0m
               });
 
             var items = projected
@@ -53,9 +56,8 @@ namespace VendaApi.Controllers
 
             var totalDebtSum = _session.Query<Dividas>()
               .Where(d => !d.Situacao)
-              .Select(d => d.Valor)
-              .DefaultIfEmpty(0m)
-              .Sum();
+              .Sum(d => (decimal?)d.Valor)
+            ?? 0m;
 
             return Ok(new
             {
