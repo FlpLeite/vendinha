@@ -1,49 +1,46 @@
-using NHibernate;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
+using NHibernate;
 using VendaApi.Mappings;
+using VendaApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton(factory =>
+builder.Services.AddSingleton<ISessionFactory>(sp =>
 {
-    var sessionFactory = Fluently.Configure()
-        .Database(PostgreSQLConfiguration
-            .Standard
-            .ConnectionString(builder.Configuration.GetConnectionString("DefaultConnection"))
-            .ShowSql())
+    var connString = builder.Configuration
+        .GetConnectionString("DefaultConnection");
+
+    return Fluently.Configure()
+        .Database(PostgreSQLConfiguration.Standard
+            .ConnectionString(connString)
+        )
         .Mappings(m =>
         {
             m.FluentMappings.AddFromAssemblyOf<ClienteMap>();
         })
         .BuildSessionFactory();
-    return sessionFactory;
 });
 
-builder.Services.AddScoped(factory =>
-{
-    var sessionFactory = factory.GetRequiredService<ISessionFactory>();
-    return sessionFactory.OpenSession();
-});
+builder.Services.AddScoped<NHibernate.ISession>(sp =>
+    sp.GetRequiredService<ISessionFactory>().OpenSession()
+);
 
-builder.Services.AddCors(options =>
+builder.Services.AddScoped<IClientesService, ClientesService>();
+
+builder.Services.AddCors(o =>
 {
-    options.AddPolicy("AllowReact", policy =>
+    o.AddPolicy("AllowReact", policy =>
         policy.AllowAnyOrigin()
               .AllowAnyHeader()
               .AllowAnyMethod());
 });
 
-builder.Services.AddScoped<IClientesService, ClientesService>();
-
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -51,7 +48,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseCors("AllowReact");
+
 app.UseAuthorization();
 app.MapControllers();
+
 app.Run();

@@ -1,67 +1,26 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Store, Users, BarChart3 } from 'lucide-react'
 import Dashboard from './Pages/Dashboard/Dashboard'
 import ClientesList from './Pages/Clientes/ClientesList'
 import ClienteForm from './components/ClienteForm'
 import DividaForm from './components/DividaForm'
+import ClientePerfilModal from './components/ClientePerfilModal'
+import { criarDivida, listarDividas } from './services/clienteService'
 
-function App() {
+export default function App() {
     const [telaAtiva, setTelaAtiva] = useState('dashboard')
     const [clientes, setClientes] = useState([])
     const [dividas, setDividas] = useState([])
+    const [pagamentos] = useState([])
     const [mostrarFormCliente, setMostrarFormCliente] = useState(false)
     const [mostrarFormDivida, setMostrarFormDivida] = useState(false)
     const [clienteFormDivida, setClienteFormDivida] = useState('')
-
-    useEffect(() => {
-        setClientes([
-            {
-                id: '1',
-                nome: 'Maria Silva',
-                telefone: '(11) 99999-1111',
-                endereco: 'Rua das Flores, 123',
-                dataCadastro: '2024-01-15T00:00:00.000Z',
-            },
-            {
-                id: '2',
-                nome: 'João Santos',
-                telefone: '(11) 99999-2222',
-                endereco: 'Av. Principal, 456',
-                dataCadastro: '2024-02-10T00:00:00.000Z',
-            },
-        ])
-        setDividas([
-            {
-                id: '1',
-                clienteId: '1',
-                descricao: 'Compras do mês - leite, pão e ovos',
-                valor: 25.5,
-                dataCompra: '2024-12-01T00:00:00.000Z',
-                status: 'pendente',
-            },
-            {
-                id: '2',
-                clienteId: '1',
-                descricao: 'Refrigerante e biscoitos',
-                valor: 15.8,
-                dataCompra: '2024-11-28T00:00:00.000Z',
-                status: 'pago',
-                dataPagamento: '2024-12-05T00:00:00.000Z',
-            },
-            {
-                id: '3',
-                clienteId: '2',
-                descricao: 'Cigarro e café',
-                valor: 35.0,
-                dataCompra: '2024-12-03T00:00:00.000Z',
-                status: 'pendente',
-            },
-        ])
-    }, [])
+    const [perfilAberto, setPerfilAberto] = useState(false)
+    const [clienteSelecionado, setClienteSelecionado] = useState(null)
 
     function calcularStats() {
-        const pendentes = dividas.filter(d => d.status === 'pendente')
-        const pagos = dividas.filter(d => d.status === 'pago')
+        const pendentes = dividas.filter(d => !d.situacao)
+        const pagos = dividas.filter(d => d.situacao)
         return {
             totalClientes: clientes.length,
             totalDividas: pendentes.length,
@@ -75,25 +34,57 @@ function App() {
         setMostrarFormCliente(false)
     }
 
-    function handleNovaDivida(clienteId) {
-        setClienteFormDivida(clienteId)
-        setMostrarFormDivida(true)
-    }
-
-    function handleSalvarDivida(dados) {
-        setDividas(prev => [
-            ...prev,
-            { ...dados, id: Date.now().toString(), status: 'pendente' },
-        ])
-        setMostrarFormDivida(false)
+    async function handleSalvarDivida({ clienteId, descricao, valor }) {
+        const { status, data } = await criarDivida(clienteId, { descricao, valor })
+        if (status === 201) {
+            setDividas(prev => [
+                ...prev,
+                {
+                    id: data.id.toString(),
+                    clienteId,
+                    descricao: data.descricao,
+                    valor: data.valor,
+                    situacao: data.situacao,
+                    dataCriacao: data.dataCriacao,
+                    dataPagamento: data.dataPagamento,
+                },
+            ])
+            setMostrarFormDivida(false)
+            setPerfilAberto(true)
+        } else {
+            alert(`Erro ${status}: ${JSON.stringify(data)}`)
+        }
     }
 
     function handleMarcarPago(id) {
         setDividas(prev =>
             prev.map(d =>
-                d.id === id ? { ...d, status: 'pago', dataPagamento: new Date().toISOString() } : d
+                d.id === id
+                    ? { ...d, situacao: true, dataPagamento: new Date().toISOString() }
+                    : d
             )
         )
+    }
+
+    function handleNovaDivida(clienteId) {
+        setPerfilAberto(false)
+        setClienteFormDivida(clienteId)
+        setMostrarFormDivida(true)
+    }
+
+    async function handleClienteSelect(cliente) {
+        setClienteSelecionado(cliente)
+        try {
+            const { status, data } = await listarDividas(cliente.id)
+            if (status === 200) {
+                setDividas(data)
+            } else {
+                setDividas([])
+            }
+        } catch {
+            setDividas([])
+        }
+        setPerfilAberto(true)
     }
 
     const stats = calcularStats()
@@ -121,8 +112,7 @@ function App() {
                                         : 'text-gray-300 hover:text-white hover:bg-gray-700'
                                 }`}
                             >
-                                <BarChart3 className="h-4 w-4" />
-                                Dashboard
+                                <BarChart3 className="h-4 w-4" /> Dashboard
                             </button>
                             <button
                                 onClick={() => setTelaAtiva('clientes')}
@@ -132,27 +122,23 @@ function App() {
                                         : 'text-gray-300 hover:text-white hover:bg-gray-700'
                                 }`}
                             >
-                                <Users className="h-4 w-4" />
-                                Clientes
+                                <Users className="h-4 w-4" /> Clientes
                             </button>
                         </nav>
                     </div>
                 </div>
             </header>
 
-            {/* Main */}
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {telaAtiva === 'dashboard' && <Dashboard stats={stats} />}
-
                 {telaAtiva === 'clientes' && (
                     <ClientesList
-                        onClienteSelect={handleNovaDivida}
+                        onClienteSelect={handleClienteSelect}
                         onNovoCliente={() => setMostrarFormCliente(true)}
                     />
                 )}
             </main>
 
-            {/* Modals */}
             {mostrarFormCliente && (
                 <ClienteForm
                     onSave={handleSalvarCliente}
@@ -162,13 +148,24 @@ function App() {
             {mostrarFormDivida && (
                 <DividaForm
                     clienteId={clienteFormDivida}
-                    clienteNome={clientes.find(c => c.id === clienteFormDivida)?.nome || ''}
+                    clienteNome={
+                        clientes.find(c => c.id === clienteFormDivida)?.nomeCompleto || ''
+                    }
                     onSave={handleSalvarDivida}
                     onCancel={() => setMostrarFormDivida(false)}
+                />
+            )}
+            {perfilAberto && clienteSelecionado && (
+                <ClientePerfilModal
+                    cliente={clienteSelecionado}
+                    dividas={dividas}
+                    pagamentos={pagamentos}
+                    onClose={() => setPerfilAberto(false)}
+                    onNovaDivida={handleNovaDivida}
+                    onNovoPagamento={() => {}}
+                    onMarcarPago={handleMarcarPago}
                 />
             )}
         </div>
     )
 }
-
-export default App
