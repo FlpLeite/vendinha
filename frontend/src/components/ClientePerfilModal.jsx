@@ -24,8 +24,12 @@ export default function ClientePerfilModal({
                                            }) {
     const [filtro, setFiltro] = useState('todas')
 
-    const dividasCliente = dividas.filter(d => d.clienteId === cliente.id)
-    const pagamentosCliente = pagamentos.filter(p => p.clienteId === cliente.id)
+    const dividasCliente = dividas.filter(
+        d => !d.clienteId || d.clienteId === cliente.id
+    )
+    const pagamentosCliente = pagamentos.filter(
+        p => !p.clienteId || p.clienteId === cliente.id
+    )
 
     const dividasFiltradas = dividasCliente.filter(d => {
         if (filtro === 'pendentes') return !d.situacao
