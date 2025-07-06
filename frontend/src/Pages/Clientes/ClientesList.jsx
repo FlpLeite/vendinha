@@ -77,7 +77,7 @@ export default function ClientesList({ onNovoCliente, onClienteSelect }) {
                             return (
                                 <div
                                     key={c.id}
-                                    onClick={() => onClienteSelect(c.id)}
+                                    onClick={() => onClienteSelect(c)}
                                     className="bg-gray-800 rounded-xl shadow-lg border border-gray-700 p-6 cursor-pointer hover:shadow-xl hover:border-emerald-500 duration-200 hover:-translate-y-1"
                                 >
                                     <div className="flex justify-between items-start mb-4">

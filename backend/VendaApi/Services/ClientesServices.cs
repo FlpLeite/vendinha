@@ -9,9 +9,9 @@ namespace VendaApi.Services
 {
     public class ClientesService : IClientesService
     {
-        private readonly ISession _session;
+        private readonly NHibernate.ISession _session;
 
-        public ClientesService(ISession session)
+        public ClientesService(NHibernate.ISession session)
         {
             _session = session;
         }
