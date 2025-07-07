@@ -5,7 +5,7 @@ import ClientesList from './Pages/Clientes/ClientesList'
 import ClienteForm from './components/ClienteForm'
 import DividaForm from './components/DividaForm'
 import ClientePerfilModal from './components/ClientePerfilModal'
-import { criarDivida, listarDividas } from './services/clienteService'
+import { criarDivida, listarDividas, pagarDivida } from './services/clienteService'
 
 export default function App() {
     const [telaAtiva, setTelaAtiva] = useState('dashboard')
@@ -56,14 +56,25 @@ export default function App() {
         }
     }
 
-    function handleMarcarPago(id) {
-        setDividas(prev =>
-            prev.map(d =>
-                d.id === id
-                    ? { ...d, situacao: true, dataPagamento: new Date().toISOString() }
-                    : d
-            )
+    async function handleMarcarPago(id) {
+        if (!clienteSelecionado) return
+
+        const { status, data } = await pagarDivida(clienteSelecionado.id, id)
+        if (status === 200) {
+            setDividas(prev =>
+                prev.map(d =>
+                    d.id === id
+                        ? {
+                            ...d,
+                            situacao: true,
+                            dataPagamento: data.dataPagamento,
+                        }
+                        : d
+                )
         )
+        } else {
+            alert(`Erro ${status}: ${JSON.stringify(data)}`)
+        }
     }
 
     function handleNovaDivida(clienteId) {

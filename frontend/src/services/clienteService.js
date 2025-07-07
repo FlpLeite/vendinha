@@ -33,3 +33,12 @@ export async function listarDividas(clienteId) {
           // no JSON vem "dividas" em lowercase
           return { status: res.status, data: json.dividas ?? [] }
 }
+
+export async function pagarDivida(clienteId, id) {
+    const res = await fetch(
+        `${baseUrl}/clientes/${clienteId}/dividas/${id}/pagar`,
+        { method: 'PUT' }
+    )
+    const data = await res.json().catch(() => ({}))
+    return { status: res.status, data }
+}
