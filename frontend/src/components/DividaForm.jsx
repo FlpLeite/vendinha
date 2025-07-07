@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, ShoppingCart, DollarSign, Calendar } from 'lucide-react';
+import React, {useState} from 'react';
+import {X, ShoppingCart, DollarSign, Calendar} from 'lucide-react';
 
 export default function DividaForm({
                                        clienteId,
@@ -34,12 +34,13 @@ export default function DividaForm({
     };
 
     const handleChange = (field, val) => {
-        setFormData(prev => ({ ...prev, [field]: val }));
-        if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
+        setFormData(prev => ({...prev, [field]: val}));
+        if (errors[field]) setErrors(prev => ({...prev, [field]: ''}));
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div
+            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
             <div className="bg-gray-800 rounded-xl shadow-2xl w-full max-w-md border border-gray-700">
                 <div className="flex items-center justify-between p-6 border-b border-gray-700">
                     <div>
@@ -47,14 +48,14 @@ export default function DividaForm({
                         <p className="text-sm text-gray-400 mt-1">Cliente: {clienteNome}</p>
                     </div>
                     <button onClick={onCancel} className="text-gray-400 hover:text-white">
-                        <X className="h-6 w-6" />
+                        <X className="h-6 w-6"/>
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     <div>
                         <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2">
-                            <ShoppingCart className="h-4 w-4" /> Descrição *
+                            <ShoppingCart className="h-4 w-4"/> Descrição *
                         </label>
                         <input
                             type="text"
@@ -70,7 +71,7 @@ export default function DividaForm({
 
                     <div>
                         <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2">
-                            <DollarSign className="h-4 w-4" /> Valor *
+                            <DollarSign className="h-4 w-4"/> Valor *
                         </label>
                         <input
                             type="number"
@@ -88,7 +89,7 @@ export default function DividaForm({
 
                     <div>
                         <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2">
-                            <Calendar className="h-4 w-4" /> Data da Compra *
+                            <Calendar className="h-4 w-4"/> Data da Compra *
                         </label>
                         <input
                             type="date"
