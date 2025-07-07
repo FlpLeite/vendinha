@@ -2,7 +2,6 @@ import React, {useState} from 'react'
 import {
     X, User, Mail, CreditCard, Phone, MapPin, Calendar, Plus, DollarSign, Check, Clock, Trash
 } from 'lucide-react'
-import { excluirCliente } from '../services/clienteService'
 
 export default function ClientePerfilModal({
     cliente,
@@ -56,12 +55,8 @@ export default function ClientePerfilModal({
     const handleOverlayClick = () => onClose()
 
     const handleExcluir = async () => {
-        const { status } = await excluirCliente(cliente.id)
-        if (status === 204 || status === 200) {
-            if (onExcluirCliente) onExcluirCliente(cliente.id)
-            onClose()
-        } else {
-            alert('Erro ao excluir cliente')
+        if (onExcluirCliente) {
+            await onExcluirCliente(cliente.id)
         }
     }
 
