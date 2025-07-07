@@ -1,24 +1,22 @@
 import React, {useState} from 'react'
 import {
-    X, User, Mail, CreditCard, Phone, MapPin, Calendar, Plus, DollarSign, Check, Clock
+    X, User, Mail, CreditCard, Phone, MapPin, Calendar, Plus, DollarSign, Check, Clock, Trash
 } from 'lucide-react'
+import { excluirCliente } from '../services/clienteService'
 
 export default function ClientePerfilModal({
-                                               cliente,
-                                               dividas = [],
-                                               pagamentos = [],
-                                               onClose,
-                                               onNovaDivida,
-                                               onNovoPagamento,
-                                               onMarcarPago
+    cliente,
+    dividas = [],
+    pagamentos = [],
+    onClose,
+    onNovaDivida,
+    onNovoPagamento,
+    onMarcarPago,
+    onExcluirCliente
                                            }) {
     const [filtro, setFiltro] = useState('todas')
-    const dividasCliente = dividas.filter(
-        d => !d.clienteId || d.clienteId === cliente.id
-    )
-    const pagamentosCliente = pagamentos.filter(
-        p => !p.clienteId || p.clienteId === cliente.id
-    )
+    const dividasCliente = dividas.filter(d => !d.clienteId || d.clienteId === cliente.id)
+    const pagamentosCliente = pagamentos.filter(p => !p.clienteId || p.clienteId === cliente.id)
 
     const dividasFiltradas = dividasCliente.filter(d => {
         if (filtro === 'pendentes') return !d.situacao
@@ -56,6 +54,16 @@ export default function ClientePerfilModal({
     })
 
     const handleOverlayClick = () => onClose()
+
+    const handleExcluir = async () => {
+        const { status } = await excluirCliente(cliente.id)
+        if (status === 204 || status === 200) {
+            if (onExcluirCliente) onExcluirCliente(cliente.id)
+            onClose()
+        } else {
+            alert('Erro ao excluir cliente')
+        }
+    }
 
     return (<div
         className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50"
@@ -111,6 +119,14 @@ export default function ClientePerfilModal({
                   </span>
                             </div>
                         </div>
+
+                        <button
+                            onClick={handleExcluir}
+                            className="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 shadow-lg mb-6"
+                        >
+                            <Trash className="h-5 w-5"/>
+                            Excluir cliente
+                        </button>
 
                         <div className="border-t border-gray-700 pt-6">
                             <h4 className="text-md font-semibold text-white mb-4">Resumo Financeiro</h4>
@@ -188,8 +204,7 @@ export default function ClientePerfilModal({
                                         <div
                                             className={`p-2 rounded-lg ${item.tipo === 'pagamento' || item.status === 'pago' ? 'bg-emerald-600' : 'bg-red-600'}`}
                                         >
-                                            {item.tipo === 'pagamento' ? (
-                                                <Check className="h-4 w-4 text-white"/>) : (
+                                            {item.tipo === 'pagamento' ? (<Check className="h-4 w-4 text-white"/>) : (
                                                 <Clock className="h-4 w-4 text-white"/>)}
                                         </div>
                                         <div>

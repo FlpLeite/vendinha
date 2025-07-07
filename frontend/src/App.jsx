@@ -5,7 +5,7 @@ import ClientesList from './Pages/Clientes/ClientesList'
 import ClienteForm from './components/ClienteForm'
 import DividaForm from './components/DividaForm'
 import ClientePerfilModal from './components/ClientePerfilModal'
-import { criarDivida, listarDividas, pagarDivida } from './services/clienteService'
+import {criarDivida, listarDividas, pagarDivida, excluirCliente} from './services/clienteService'
 import ErrorModal from './components/ErroModal'
 
 export default function App() {
@@ -81,11 +81,26 @@ export default function App() {
             setErro(`Erro ${status}: ${msg}`)
         }
     }
+
     function handleNovaDivida(clienteId) {
         setPerfilAberto(false)
         setClienteFormDivida(clienteId)
         setMostrarFormDivida(true)
     }
+
+    async function handleExcluirCliente(id) {
+        const { status, data } = await excluirCliente(id)
+        if (status === 204 || status === 200) {
+            setClientes(prev => prev.filter(c => c.id !== id))
+            setDividas(prev => prev.filter(d => d.clienteId !== id))
+            setPerfilAberto(false)
+            setClienteSelecionado(null)
+        } else {
+            const msg = typeof data === 'string' ? data : JSON.stringify(data)
+            setErro(`Erro ${status}: ${msg}`)
+        }
+    }
+
 
     async function handleClienteSelect(cliente) {
         setClienteSelecionado(cliente)
@@ -180,10 +195,11 @@ export default function App() {
                     onNovoPagamento={() => {
                     }}
                     onMarcarPago={handleMarcarPago}
+                    onExcluirCliente={handleExcluirCliente}
                 />
             )}
             {erro && (
-                <ErrorModal message={erro} onClose={() => setErro('')} />
+                <ErrorModal message={erro} onClose={() => setErro('')}/>
             )}
         </div>
     )
