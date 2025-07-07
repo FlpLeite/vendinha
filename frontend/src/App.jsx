@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
-import { Store, Users, BarChart3 } from 'lucide-react'
+import React, {useState} from 'react'
+import {Store, Users, BarChart3} from 'lucide-react'
 import Dashboard from './Pages/Dashboard/Dashboard'
 import ClientesList from './Pages/Clientes/ClientesList'
 import ClienteForm from './components/ClienteForm'
 import DividaForm from './components/DividaForm'
 import ClientePerfilModal from './components/ClientePerfilModal'
 import { criarDivida, listarDividas, pagarDivida } from './services/clienteService'
+import ErrorModal from './components/ErroModal'
 
 export default function App() {
     const [telaAtiva, setTelaAtiva] = useState('dashboard')
@@ -17,6 +18,7 @@ export default function App() {
     const [clienteFormDivida, setClienteFormDivida] = useState('')
     const [perfilAberto, setPerfilAberto] = useState(false)
     const [clienteSelecionado, setClienteSelecionado] = useState(null)
+    const [erro, setErro] = useState('')
 
     function calcularStats() {
         const pendentes = dividas.filter(d => !d.situacao)
@@ -30,12 +32,12 @@ export default function App() {
     }
 
     function handleSalvarCliente(novo) {
-        setClientes(prev => [...prev, { ...novo, id: Date.now().toString() }])
+        setClientes(prev => [...prev, {...novo, id: Date.now().toString()}])
         setMostrarFormCliente(false)
     }
 
-    async function handleSalvarDivida({ clienteId, descricao, valor }) {
-        const { status, data } = await criarDivida(clienteId, { descricao, valor })
+    async function handleSalvarDivida({clienteId, descricao, valor}) {
+        const {status, data} = await criarDivida(clienteId, {descricao, valor})
         if (status === 201) {
             setDividas(prev => [
                 ...prev,
@@ -51,15 +53,17 @@ export default function App() {
             ])
             setMostrarFormDivida(false)
             setPerfilAberto(true)
+            setErro('')
         } else {
-            alert(`Erro ${status}: ${JSON.stringify(data)}`)
+            const msg = typeof data === 'string' ? data : JSON.stringify(data)
+            setErro(`Erro ${status}: ${msg}`)
         }
     }
 
     async function handleMarcarPago(id) {
         if (!clienteSelecionado) return
 
-        const { status, data } = await pagarDivida(clienteSelecionado.id, id)
+        const {status, data} = await pagarDivida(clienteSelecionado.id, id)
         if (status === 200) {
             setDividas(prev =>
                 prev.map(d =>
@@ -71,12 +75,12 @@ export default function App() {
                         }
                         : d
                 )
-        )
+            )
         } else {
-            alert(`Erro ${status}: ${JSON.stringify(data)}`)
+            const msg = typeof data === 'string' ? data : JSON.stringify(data)
+            setErro(`Erro ${status}: ${msg}`)
         }
     }
-
     function handleNovaDivida(clienteId) {
         setPerfilAberto(false)
         setClienteFormDivida(clienteId)
@@ -86,7 +90,7 @@ export default function App() {
     async function handleClienteSelect(cliente) {
         setClienteSelecionado(cliente)
         try {
-            const { status, data } = await listarDividas(cliente.id)
+            const {status, data} = await listarDividas(cliente.id)
             if (status === 200) {
                 setDividas(data)
             } else {
@@ -107,7 +111,7 @@ export default function App() {
                     <div className="flex justify-between items-center h-16">
                         <div className="flex items-center gap-3">
                             <div className="bg-emerald-600 p-2 rounded-lg shadow-lg">
-                                <Store className="h-6 w-6 text-white" />
+                                <Store className="h-6 w-6 text-white"/>
                             </div>
                             <div>
                                 <h1 className="text-xl font-bold text-white">Vendinha do Zé</h1>
@@ -123,7 +127,7 @@ export default function App() {
                                         : 'text-gray-300 hover:text-white hover:bg-gray-700'
                                 }`}
                             >
-                                <BarChart3 className="h-4 w-4" /> Dashboard
+                                <BarChart3 className="h-4 w-4"/> Dashboard
                             </button>
                             <button
                                 onClick={() => setTelaAtiva('clientes')}
@@ -133,7 +137,7 @@ export default function App() {
                                         : 'text-gray-300 hover:text-white hover:bg-gray-700'
                                 }`}
                             >
-                                <Users className="h-4 w-4" /> Clientes
+                                <Users className="h-4 w-4"/> Clientes
                             </button>
                         </nav>
                     </div>
@@ -141,7 +145,7 @@ export default function App() {
             </header>
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {telaAtiva === 'dashboard' && <Dashboard stats={stats} />}
+                {telaAtiva === 'dashboard' && <Dashboard stats={stats}/>}
                 {telaAtiva === 'clientes' && (
                     <ClientesList
                         onClienteSelect={handleClienteSelect}
@@ -173,9 +177,13 @@ export default function App() {
                     pagamentos={pagamentos}
                     onClose={() => setPerfilAberto(false)}
                     onNovaDivida={handleNovaDivida}
-                    onNovoPagamento={() => {}}
+                    onNovoPagamento={() => {
+                    }}
                     onMarcarPago={handleMarcarPago}
                 />
+            )}
+            {erro && (
+                <ErrorModal message={erro} onClose={() => setErro('')} />
             )}
         </div>
     )

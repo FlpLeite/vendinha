@@ -12,5 +12,5 @@ export async function listarClientes(busca = '', page = 1) {
         `${baseUrl}/clientes?page=${page}&name=${encodeURIComponent(busca)}`
     );
     const data = await res.json();
-    return { status: res.status, data };
+    return {status: res.status, data};
 }
