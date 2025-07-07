@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "IZBUwXeMNso=",
+  "dgSpecHash": "uBwK3ux/zsElTY1rC7YgDKNiQtjUetiKv/FBWRc8ZO44/W1nFehYTE5J/w/blwE6r5MJd9OGp7yRXpn/sSP0qw==",
   "success": true,
   "projectFilePath": "C:\\Users\\felip\\OneDrive\\Documentos\\Vendinha\\backend\\VendaApi\\VendaApi.csproj",
   "expectedPackageFiles": [
@@ -102,8 +102,8 @@
     "C:\\Users\\felip\\.nuget\\packages\\system.windows.extensions\\6.0.0\\system.windows.extensions.6.0.0.nupkg.sha512",
     "C:\\Users\\felip\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
     "C:\\Users\\felip\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512",
-    "C:\\Users\\felip\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.8\\microsoft.netcore.app.ref.8.0.8.nupkg.sha512",
     "C:\\Users\\felip\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.8\\microsoft.windowsdesktop.app.ref.8.0.8.nupkg.sha512",
+    "C:\\Users\\felip\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.8\\microsoft.netcore.app.ref.8.0.8.nupkg.sha512",
     "C:\\Users\\felip\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.8\\microsoft.aspnetcore.app.ref.8.0.8.nupkg.sha512",
     "C:\\Users\\felip\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\8.0.8\\microsoft.netcore.app.host.win-x64.8.0.8.nupkg.sha512"
   ],

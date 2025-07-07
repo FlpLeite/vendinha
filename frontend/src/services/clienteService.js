@@ -33,7 +33,7 @@ export async function criarDivida(clienteId, {descricao, valor}) {
 }
 
 export async function listarDividas(clienteId) {
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5057'
+    const baseUrl = import.meta.env.VITE_API_URL
     const res = await fetch(`${baseUrl}/clientes/${clienteId}/dividas`)
     const json = await res.json()
     return {status: res.status, data: json.dividas ?? []}
@@ -45,5 +45,17 @@ export async function pagarDivida(clienteId, id) {
         { method: 'PUT' }
     )
     const data = await res.json().catch(() => ({}))
+    return { status: res.status, data }
+}
+
+export async function excluirCliente(id) {
+    const res = await fetch(`${baseUrl}/clientes/${id}`, { method: 'DELETE' })
+    const text = await res.text()
+    let data
+    try {
+        data = JSON.parse(text)
+    } catch {
+        data = text
+    }
     return { status: res.status, data }
 }
