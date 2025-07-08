@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Dashboard({stats}) {
+export default function Dividas({stats}) {
     return (
         <div className="text-white">
             <h2 className="text-2xl mb-4">Dashboard</h2>
