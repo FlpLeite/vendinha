@@ -1,7 +1,8 @@
 import React, {useState} from 'react'
 import {
-    X, User, Mail, CreditCard, Phone, MapPin, Calendar, Plus, DollarSign, Check, Clock, Trash
+    X, User, Mail, CreditCard, Phone, MapPin, Calendar, Plus, DollarSign, Check, Clock, Trash, Pencil, Save,
 } from 'lucide-react'
+import { atualizarCliente } from '../services/clienteService'
 
 export default function ClientePerfilModal({
     cliente,
@@ -11,9 +12,18 @@ export default function ClientePerfilModal({
     onNovaDivida,
     onNovoPagamento,
     onMarcarPago,
-    onExcluirCliente
+    onExcluirCliente,
+    onAtualizarCliente,
                                            }) {
     const [filtro, setFiltro] = useState('todas')
+    const [editando, setEditando] = useState(false)
+    const [formData, setFormData] = useState({
+        nomeCompleto: cliente.nomeCompleto,
+        cpf: cliente.cpf,
+        dataNascimento: cliente.dataNascimento?.split('T')[0] || '',
+        email: cliente.email ?? '',
+    })
+    const [salvando, setSalvando] = useState(false)
     const dividasCliente = dividas.filter(d => !d.clienteId || d.clienteId === cliente.id)
     const pagamentosCliente = pagamentos.filter(p => !p.clienteId || p.clienteId === cliente.id)
 
@@ -80,6 +90,29 @@ export default function ClientePerfilModal({
         }
     }
 
+    const handleChange = (field, value) => {
+        setFormData(prev => ({ ...prev, [field]: value }))
+    }
+
+    const handleSalvar = async () => {
+        setSalvando(true)
+        const payload = {
+            nomeCompleto: formData.nomeCompleto,
+            cpf: formData.cpf,
+            dataNascimento: formData.dataNascimento,
+            email: formData.email === '' ? null : formData.email,
+        }
+        const { status, data } = await atualizarCliente(cliente.id, payload)
+        setSalvando(false)
+        if (status === 200) {
+            setEditando(false)
+            if (onAtualizarCliente) onAtualizarCliente(cliente.id, data)
+        } else {
+            const msg = typeof data === 'string' ? data : JSON.stringify(data)
+            alert(`Erro ${status}: ${msg}`)
+        }
+    }
+
     return (<div
         className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50"
         onClick={handleOverlayClick}
@@ -112,34 +145,104 @@ export default function ClientePerfilModal({
             <div className="flex-1 flex flex-col lg:flex-row min-h-0">
                 <div className="lg:w-1/3 border-b lg:border-b-0 lg:border-r border-gray-700 flex flex-col">
                     <div className="p-6 flex-1 overflow-y-auto">
-                        <h3 className="text-lg font-semibold text-white mb-4">Informações</h3>
-
-                        <div className="space-y-4 mb-6 text-sm text-gray-400">
-                            <div className="flex items-center gap-3">
-                                <User className="h-5 w-5"/>
-                                <span className="font-medium text-white truncate">Nome: {cliente.nomeCompleto}</span>
-                            </div>
-                            {cliente.email && (<div className="flex items-center gap-3">
-                                <Mail className="h-5 w-5"/>
-                                <span className="font-medium text-white truncate">Email: {cliente.email}</span>
-                            </div>)}
-                            {cliente.cpf && (
-                                <div className="flex items-center gap-3">
-                                    <CreditCard className="h-5 w-5"/>
-                                    <span className="font-medium text-white">CPF: {cpfFormatado}</span>
-                                </div>
+                        <div className="flex items-start justify-between mb-4">
+                            <h3 className="text-lg font-semibold text-white">Informações</h3>
+                            {!editando && (
+                                <button
+                                    onClick={() => setEditando(true)}
+                                    className="flex items-center gap-1 text-sm text-gray-300 hover:text-white"
+                                >
+                                    <Pencil className="h-4 w-4"/> Editar
+                                </button>
                             )}
-                            <div className="flex items-center gap-3">
-                                <Calendar className="h-5 w-5"/>
-                                <span className="font-medium text-white"> Data de nascimento: {new Date(cliente.dataNascimento).toLocaleDateString('pt-BR')}
-                  </span>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <Clock className="h-5 w-5"/>
-                                <span className="font-medium text-white">Idade: {idade} anos</span>
-                            </div>
                         </div>
 
+                        {!editando && (
+                            <div className="space-y-4 mb-6 text-sm text-gray-400">
+                                <div className="flex items-center gap-3">
+                                    <User className="h-5 w-5"/>
+                                    <span className="font-medium text-white truncate">Nome: {cliente.nomeCompleto}</span>
+                                </div>
+                                {cliente.email && (
+                                    <div className="flex items-center gap-3">
+                                        <Mail className="h-5 w-5"/>
+                                        <span className="font-medium text-white truncate">Email: {cliente.email}</span>
+                                    </div>
+                                )}
+                                {cliente.cpf && (
+                                    <div className="flex items-center gap-3">
+                                        <CreditCard className="h-5 w-5"/>
+                                        <span className="font-medium text-white">CPF: {cpfFormatado}</span>
+                                    </div>
+                                )}
+                                <div className="flex items-center gap-3">
+                                    <Calendar className="h-5 w-5"/>
+                                    <span className="font-medium text-white"> Data de nascimento: {new Date(cliente.dataNascimento).toLocaleDateString('pt-BR')}</span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <Clock className="h-5 w-5"/>
+                                    <span className="font-medium text-white">Idade: {idade} anos</span>
+                                </div>
+                            </div>
+                        )}
+                        {editando && (
+                            <div className="space-y-4 mb-6 text-sm text-gray-200">
+                                <div>
+                                    <label className="block mb-1">Nome Completo</label>
+                                    <input
+                                        type="text"
+                                        value={formData.nomeCompleto}
+                                        onChange={e => handleChange('nomeCompleto', e.target.value)}
+                                        className="w-full bg-gray-700 p-2 rounded"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block mb-1">CPF</label>
+                                    <input
+                                        type="text"
+                                        value={formData.cpf}
+                                        onChange={e => handleChange('cpf', e.target.value)}
+                                        className="w-full bg-gray-700 p-2 rounded"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block mb-1">Data de Nascimento</label>
+                                    <input
+                                        type="date"
+                                        value={formData.dataNascimento}
+                                        onChange={e => handleChange('dataNascimento', e.target.value)}
+                                        className="w-full bg-gray-700 p-2 rounded"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block mb-1">E-mail</label>
+                                    <input
+                                        type="email"
+                                        value={formData.email}
+                                        onChange={e => handleChange('email', e.target.value)}
+                                        className="w-full bg-gray-700 p-2 rounded"
+                                    />
+                                </div>
+                                <div className="flex gap-2 pt-2">
+                                    <button
+                                        className="flex-1 bg-gray-600 rounded p-2"
+                                        onClick={() => setEditando(false)}
+                                        type="button"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        className="flex-1 bg-emerald-600 rounded p-2 text-white flex items-center justify-center gap-1"
+                                        onClick={handleSalvar}
+                                        type="button"
+                                        disabled={salvando}
+                                    >
+                                        <Save className="h-4 w-4"/>
+                                        {salvando ? 'Salvando...' : 'Salvar'}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                         <button
                             onClick={handleExcluir}
                             className="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 shadow-lg mb-6"

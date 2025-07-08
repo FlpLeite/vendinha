@@ -5,7 +5,7 @@ import ClientesList from './Pages/Clientes/ClientesList'
 import ClienteForm from './components/ClienteForm'
 import DividaForm from './components/DividaForm'
 import ClientePerfilModal from './components/ClientePerfilModal'
-import {criarDivida, listarDividas, pagarDivida, excluirCliente} from './services/clienteService'
+import {criarDivida, listarDividas, pagarDivida, excluirCliente, atualizarCliente,} from './services/clienteService'
 import ErrorModal from './components/ErroModal'
 
 export default function App() {
@@ -88,7 +88,7 @@ export default function App() {
         setMostrarFormDivida(true)
     }
 
-    async function handleExcluirCliente(id) {
+async function handleExcluirCliente(id) {
         const { status, data } = await excluirCliente(id)
         if (status === 204 || status === 200) {
             setClientes(prev => prev.filter(c => c.id !== id))
@@ -100,7 +100,16 @@ export default function App() {
             setErro(`Erro ${status}: ${msg}`)
         }
     }
-
+    async function handleAtualizarCliente(id, dados) {
+        const { status, data } = await atualizarCliente(id, dados)
+        if (status === 200) {
+            setClientes(prev => prev.map(c => (c.id === id ? data : c)))
+            setClienteSelecionado(data)
+        } else {
+            const msg = typeof data === "string" ? data : JSON.stringify(data)
+            setErro(`Erro ${status}: ${msg}`)
+        }
+    }
 
     async function handleClienteSelect(cliente) {
         setClienteSelecionado(cliente)
@@ -196,6 +205,7 @@ export default function App() {
                     }}
                     onMarcarPago={handleMarcarPago}
                     onExcluirCliente={handleExcluirCliente}
+                    onAtualizarCliente={handleAtualizarCliente}
                 />
             )}
             {erro && (
@@ -204,3 +214,14 @@ export default function App() {
         </div>
     )
 }
+
+    async function handleAtualizarCliente(id, dados) {
+        const { status, data } = await atualizarCliente(id, dados)
+        if (status === 200) {
+            setClientes(prev => prev.map(c => (c.id === id ? data : c)))
+            setClienteSelecionado(data)
+        } else {
+            const msg = typeof data === 'string' ? data : JSON.stringify(data)
+            setErro(`Erro ${status}: ${msg}`)
+        }
+    }

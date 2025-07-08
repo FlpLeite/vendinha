@@ -60,3 +60,18 @@ export async function excluirCliente(id) {
     }
     return { status: res.status, data }
 }
+export async function atualizarCliente(id, dados) {
+    const res = await fetch(`${baseUrl}/api/clientes/${id}`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(dados),
+    })
+    const text = await res.text()
+    let data
+    try {
+        data = JSON.parse(text)
+    } catch {
+        data = text
+    }
+    return { status: res.status, data }
+}
