@@ -1,13 +1,15 @@
 const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5057'
 
 export async function listarClientes(busca = '', page = 1) {
-    const res = await fetch(`${baseUrl}/clientes?page=${page}&name=${encodeURIComponent(busca)}`)
+    const res = await fetch(
+        `${baseUrl}/api/clientes?page=${page}&name=${encodeURIComponent(busca)}`
+    )
     const data = await res.json()
     return {status: res.status, data}
 }
 
 export async function criarCliente(dados) {
-    const res = await fetch(`${baseUrl}/clientes`, {
+    const res = await fetch(`${baseUrl}/api/clientes`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(dados),
@@ -49,7 +51,7 @@ export async function pagarDivida(clienteId, id) {
 }
 
 export async function excluirCliente(id) {
-    const res = await fetch(`${baseUrl}/clientes/${id}`, { method: 'DELETE' })
+    const res = await fetch(`${baseUrl}/api/clientes/${id}`, { method: 'DELETE' })
     const text = await res.text()
     let data
     try {
