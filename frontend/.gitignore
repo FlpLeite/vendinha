@@ -10,6 +10,9 @@ lerna-debug.log*
 **/[Bb]in/
 **/[Oo]bj/
 
+/backend/VendaApi/bin/
+/backend/VendaApi/obj/
+
 node_modules
 dist
 dist-ssr

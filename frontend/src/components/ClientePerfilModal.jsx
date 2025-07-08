@@ -17,6 +17,26 @@ export default function ClientePerfilModal({
     const dividasCliente = dividas.filter(d => !d.clienteId || d.clienteId === cliente.id)
     const pagamentosCliente = pagamentos.filter(p => !p.clienteId || p.clienteId === cliente.id)
 
+    const calcularIdade = (data) => {
+        const hoje = new Date()
+        const nascimento = new Date(data)
+        let idade = hoje.getFullYear() - nascimento.getFullYear()
+        const mes = hoje.getMonth() - nascimento.getMonth()
+        if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+            idade--
+        }
+        return idade
+    }
+
+    const formatarCpf = cpf => {
+        const limpo = cpf.toString().replace(/\D/g, '')
+        if (limpo.length !== 11) return cpf
+        return limpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+    }
+
+    const cpfFormatado = cliente.cpf ? formatarCpf(cliente.cpf) : null
+    const idade = calcularIdade(cliente.dataNascimento)
+
     const dividasFiltradas = dividasCliente.filter(d => {
         if (filtro === 'pendentes') return !d.situacao
         if (filtro === 'pagas') return d.situacao
@@ -97,21 +117,26 @@ export default function ClientePerfilModal({
                         <div className="space-y-4 mb-6 text-sm text-gray-400">
                             <div className="flex items-center gap-3">
                                 <User className="h-5 w-5"/>
-                                <span className="font-medium text-white truncate">{cliente.nomeCompleto}</span>
+                                <span className="font-medium text-white truncate">Nome: {cliente.nomeCompleto}</span>
                             </div>
                             {cliente.email && (<div className="flex items-center gap-3">
                                 <Mail className="h-5 w-5"/>
-                                <span className="font-medium text-white truncate">{cliente.email}</span>
+                                <span className="font-medium text-white truncate">Email: {cliente.email}</span>
                             </div>)}
-                            {cliente.cpf && (<div className="flex items-center gap-3">
-                                <CreditCard className="h-5 w-5"/>
-                                <span className="font-medium text-white">{cliente.cpf}</span>
-                            </div>)}
+                            {cliente.cpf && (
+                                <div className="flex items-center gap-3">
+                                    <CreditCard className="h-5 w-5"/>
+                                    <span className="font-medium text-white">CPF: {cpfFormatado}</span>
+                                </div>
+                            )}
                             <div className="flex items-center gap-3">
                                 <Calendar className="h-5 w-5"/>
-                                <span className="font-medium text-white">
-                    {new Date(cliente.dataNascimento).toLocaleDateString('pt-BR')}
+                                <span className="font-medium text-white"> Data de nascimento: {new Date(cliente.dataNascimento).toLocaleDateString('pt-BR')}
                   </span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <Clock className="h-5 w-5"/>
+                                <span className="font-medium text-white">Idade: {idade} anos</span>
                             </div>
                         </div>
 
