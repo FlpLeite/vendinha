@@ -35,10 +35,9 @@ export async function criarDivida(clienteId, {descricao, valor}) {
 }
 
 export async function listarDividas(clienteId) {
-    const baseUrl = import.meta.env.VITE_API_URL
     const res = await fetch(`${baseUrl}/clientes/${clienteId}/dividas`)
     const json = await res.json()
-    return {status: res.status, data: json.dividas ?? []}
+    return { status: res.status, data: json.dividas ?? [] }
 }
 
 export async function pagarDivida(clienteId, id) {
