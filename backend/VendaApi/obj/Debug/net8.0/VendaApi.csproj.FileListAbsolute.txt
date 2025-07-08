@@ -6,6 +6,7 @@ C:\Users\felip\OneDrive\Documentos\Vendinha\backend\VendaApi\obj\Debug\net8.0\Ve
 C:\Users\felip\OneDrive\Documentos\Vendinha\backend\VendaApi\obj\Debug\net8.0\VendaApi.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\felip\OneDrive\Documentos\Vendinha\backend\VendaApi\obj\Debug\net8.0\VendaApi.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\felip\OneDrive\Documentos\Vendinha\backend\VendaApi\obj\Debug\net8.0\VendaApi.sourcelink.json
+C:\Users\felip\OneDrive\Documentos\Vendinha\backend\VendaApi\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\felip\OneDrive\Documentos\Vendinha\backend\VendaApi\bin\Debug\net8.0\appsettings.json
 C:\Users\felip\OneDrive\Documentos\Vendinha\backend\VendaApi\bin\Debug\net8.0\VendaApi.exe
 C:\Users\felip\OneDrive\Documentos\Vendinha\backend\VendaApi\bin\Debug\net8.0\VendaApi.deps.json
