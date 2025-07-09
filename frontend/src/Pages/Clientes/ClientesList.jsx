@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {Search, Plus, User, Phone, MapPin, Calendar} from 'lucide-react'
 import {listarClientes} from '../../services/clienteService'
 
-export default function ClientesList({onNovoCliente, onClienteSelect}) {
+export default function ClientesList({onNovoCliente, onClienteSelect, refreshKey}) {
     const [clientes, setClientes] = useState([])
     const [busca, setBusca] = useState('')
     const [page, setPage] = useState(1)
@@ -28,7 +28,7 @@ export default function ClientesList({onNovoCliente, onClienteSelect}) {
     useEffect(() => {
         const timeout = setTimeout(fetchClientes, 500)
         return () => clearTimeout(timeout)
-    }, [busca, page])
+    }, [busca, page, refreshKey])
 
     const filtrados = clientes.filter(c => c.nomeCompleto.toLowerCase().includes(busca.toLowerCase()) || (c.telefone && c.telefone.includes(busca)))
 

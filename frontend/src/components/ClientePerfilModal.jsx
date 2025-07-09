@@ -54,7 +54,10 @@ export default function ClientePerfilModal({
     })
 
     const valorTotalDividas = dividasCliente.reduce((sum, d) => sum + d.valor, 0)
-    const valorTotalPagamentos = pagamentosCliente.reduce((sum, p) => sum + p.valor, 0)
+    const valorTotalPagamentos = dividasCliente
+        .filter(d => d.situacao)
+        .reduce((sum, d) => sum + d.valor, 0)
+
     const valorDevido = Math.max(0, valorTotalDividas - valorTotalPagamentos)
     const valorPendenteDividas = dividasCliente
         .filter(d => !d.situacao)
@@ -128,10 +131,6 @@ export default function ClientePerfilModal({
                     </div>
                     <div>
                         <h2 className="text-2xl font-semibold text-white">{cliente.nomeCompleto}</h2>
-                        <p className="text-gray-400">
-                            Cliente desde{' '}
-                            {new Date(cliente.dataNascimento).toLocaleDateString('pt-BR')}
-                        </p>
                     </div>
                 </div>
                 <button
@@ -259,7 +258,7 @@ export default function ClientePerfilModal({
                                     <span className="text-white">{dividasCliente.length}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span>Valor dívidas:</span>
+                                    <span>Valor dívidas (total):</span>
                                     <span className="text-white">R$ {valorTotalDividas.toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between">
@@ -342,6 +341,7 @@ export default function ClientePerfilModal({
                                     </div>
                                     <div className="flex items-center gap-2 text-sm text-gray-400 ml-12">
                                         <Calendar className="h-4 w-4"/>
+                                        <div>Dívida feita em:</div>
                                         {new Date(item.data).toLocaleDateString('pt-BR')}
                                     </div>
                                 </div>

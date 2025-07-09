@@ -19,6 +19,7 @@ export default function App() {
     const [perfilAberto, setPerfilAberto] = useState(false)
     const [clienteSelecionado, setClienteSelecionado] = useState(null)
     const [erro, setErro] = useState('')
+    const [refreshClientes, setRefreshClientes] = useState(0)
 
     function calcularStats() {
         const pendentes = dividas.filter(d => !d.situacao)
@@ -34,6 +35,7 @@ export default function App() {
     function handleSalvarCliente(novo) {
         setClientes(prev => [...prev, {...novo, id: Date.now().toString()}])
         setMostrarFormCliente(false)
+        setRefreshClientes(c => c + 1)
     }
 
     async function handleSalvarDivida({clienteId, descricao, valor}) {
@@ -95,6 +97,7 @@ async function handleExcluirCliente(id) {
             setDividas(prev => prev.filter(d => d.clienteId !== id))
             setPerfilAberto(false)
             setClienteSelecionado(null)
+            setRefreshClientes(c => c + 1)
         } else {
             const msg = typeof data === 'string' ? data : JSON.stringify(data)
             setErro(`Erro ${status}: ${msg}`)
@@ -174,6 +177,7 @@ async function handleExcluirCliente(id) {
                     <ClientesList
                         onClienteSelect={handleClienteSelect}
                         onNovoCliente={() => setMostrarFormCliente(true)}
+                        refreshKey={refreshClientes}
                     />
                 )}
             </main>
