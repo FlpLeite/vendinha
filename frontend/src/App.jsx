@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {Store, Users, BarChart3} from 'lucide-react'
-import Dividas from './Pages/Dashboard/Dividas'
+import Dividas from './Pages/Dividas/Dividas'
 import ClientesList from './Pages/Clientes/ClientesList'
 import ClienteForm from './components/ClienteForm'
 import DividaForm from './components/DividaForm'
@@ -172,7 +172,12 @@ async function handleExcluirCliente(id) {
             </header>
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {telaAtiva === 'dashboard' && <Dividas stats={stats}/>}
+                {telaAtiva === 'dashboard' && (
+                    <Dividas
+                        dividas={dividas}
+                        onMarcarPago={handleMarcarPago}
+                    />
+                )}
                 {telaAtiva === 'clientes' && (
                     <ClientesList
                         onClienteSelect={handleClienteSelect}
