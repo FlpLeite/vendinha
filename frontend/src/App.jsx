@@ -154,7 +154,7 @@ async function handleExcluirCliente(id) {
                                         : 'text-gray-300 hover:text-white hover:bg-gray-700'
                                 }`}
                             >
-                                <BarChart3 className="h-4 w-4"/> Dashboard
+                                <BarChart3 className="h-4 w-4"/> Dívidas
                             </button>
                             <button
                                 onClick={() => setTelaAtiva('clientes')}
@@ -173,10 +173,7 @@ async function handleExcluirCliente(id) {
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {telaAtiva === 'dashboard' && (
-                    <Dividas
-                        dividas={dividas}
-                        onMarcarPago={handleMarcarPago}
-                    />
+                    <Dividas />
                 )}
                 {telaAtiva === 'clientes' && (
                     <ClientesList
@@ -223,14 +220,3 @@ async function handleExcluirCliente(id) {
         </div>
     )
 }
-
-    async function handleAtualizarCliente(id, dados) {
-        const { status, data } = await atualizarCliente(id, dados)
-        if (status === 200) {
-            setClientes(prev => prev.map(c => (c.id === id ? data : c)))
-            setClienteSelecionado(data)
-        } else {
-            const msg = typeof data === 'string' ? data : JSON.stringify(data)
-            setErro(`Erro ${status}: ${msg}`)
-        }
-    }
