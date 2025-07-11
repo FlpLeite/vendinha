@@ -3,7 +3,9 @@ import { Check } from 'lucide-react'
 import { fetchDashboardStats } from '../../services/dashboardService'
 import Dashboard from '../../components/Dashboard'
 
-export default function Dividas({ dividas = [], onMarcarPago }) {
+const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5057'
+export default function Dividas({ onMarcarPago }) {
+    const [dividas, setDividas] = useState([])
     const [stats, setStats] = useState({
         totalClientes: 0,
         totalDividas: 0,
@@ -28,7 +30,17 @@ export default function Dividas({ dividas = [], onMarcarPago }) {
                 console.error('Erro ao buscar estatísticas:', err)
             }
         }
+        async function loadDividas() {
+            try {
+                const res = await fetch(`${baseUrl}/api/dividas`)
+                const data = await res.json()
+                if (res.ok) setDividas(data)
+            } catch (err) {
+                console.error('Erro ao buscar dívidas:', err)
+            }
+        }
         loadStats()
+        loadDividas()
     }, [])
 
     const ordenadas = useMemo(
@@ -54,7 +66,7 @@ export default function Dividas({ dividas = [], onMarcarPago }) {
                         <th className="px-4 py-2 text-right">Valor (R$)</th>
                         <th className="px-4 py-2">Data</th>
                         <th className="px-4 py-2 text-center">Status</th>
-                        <th className="px-4 py-2" /> {/* coluna para ação */}
+                        <th className="px-4 py-2" />
                     </tr>
                     </thead>
 
@@ -69,7 +81,15 @@ export default function Dividas({ dividas = [], onMarcarPago }) {
                                 {new Date(divida.dataCriacao).toLocaleDateString('pt-BR')}
                             </td>
                             <td className="px-4 py-2 text-center">
-                                {divida.situacao ? 'Pago' : 'Pendente'}
+                                <span
+                                    className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                                        divida.situacao
+                                            ? 'bg-emerald-600 text-white'
+                                            : 'bg-yellow-500 text-black'
+                                    }`}
+                                >
+                                    {divida.situacao ? 'Pago' : 'Pendente'}
+                                </span>
                             </td>
                             <td className="px-4 py-2 text-center">
                                 {!divida.situacao && (
