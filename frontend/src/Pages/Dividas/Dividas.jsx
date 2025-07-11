@@ -6,6 +6,7 @@ import Dashboard from '../../components/Dashboard'
 const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5057'
 export default function Dividas({ onMarcarPago }) {
     const [dividas, setDividas] = useState([])
+    const [page, setPage] = useState(1)
     const [stats, setStats] = useState({
         totalClientes: 0,
         totalDividas: 0,
@@ -32,16 +33,16 @@ export default function Dividas({ onMarcarPago }) {
         }
         async function loadDividas() {
             try {
-                const res = await fetch(`${baseUrl}/api/dividas`)
+                const res = await fetch(`${baseUrl}/api/dividas?page=${page}`)
                 const data = await res.json()
-                if (res.ok) setDividas(data)
+                if (res.ok) setDividas(data.items ?? data.Items ?? data)
             } catch (err) {
                 console.error('Erro ao buscar dívidas:', err)
             }
         }
         loadStats()
         loadDividas()
-    }, [])
+    }, [page])
 
     const ordenadas = useMemo(
         () => [...dividas].sort((a, b) => b.valor - a.valor),
@@ -118,20 +119,23 @@ export default function Dividas({ onMarcarPago }) {
                     </tbody>
 
                     <tfoot className="bg-gray-700 font-semibold">
-                    <tr>
-                        <td
-                            colSpan={1}
-                            className="px-4 py-2 text-right"
-                        >
-                            Total
-                        </td>
-                        <td className="px-4 py-2 text-right">
-                            R$ {total.toFixed(2)}
-                        </td>
-                        <td colSpan={3} />
-                    </tr>
                     </tfoot>
                 </table>
+            </div>
+            <div className="mt-4 space-x-2">
+                <button
+                    disabled={page === 1}
+                    onClick={() => setPage(p => Math.max(p - 1, 1))}
+                    className="px-4 py-2 bg-gray-700 rounded disabled:opacity-50"
+                >
+                    ◀ Anterior
+                </button>
+                <button
+                    onClick={() => setPage(p => p + 1)}
+                    className="px-4 py-2 bg-gray-700 rounded"
+                >
+                    Próxima ▶
+                </button>
             </div>
         </div>
     )

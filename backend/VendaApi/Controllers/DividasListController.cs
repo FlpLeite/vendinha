@@ -17,9 +17,16 @@ namespace VendaApi.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get([FromQuery] int page = 1)
         {
-            var dtos = _session.Query<Dividas>()
+            const int pageSize = 8;
+
+            var query = _session.Query<Dividas>();
+
+            var items = query
+                .OrderByDescending(d => d.DataCriacao)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(d => new DividasDTO
                 {
                     Id = d.Id,
@@ -31,7 +38,7 @@ namespace VendaApi.Controllers
                 })
                 .ToList();
 
-            return Ok(dtos);
+            return Ok(new { Page = page, PageSize = pageSize, Items = items });
         }
     }
 }
