@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import {Store, Users, BarChart3} from 'lucide-react'
 import Dividas from './Pages/Dividas/Dividas'
 import ClientesList from './Pages/Clientes/ClientesList'
@@ -20,6 +20,7 @@ export default function App() {
     const [clienteSelecionado, setClienteSelecionado] = useState(null)
     const [erro, setErro] = useState('')
     const [refreshClientes, setRefreshClientes] = useState(0)
+    const [refreshDividas, setRefreshDividas] = useState(0)
 
     function calcularStats() {
         const pendentes = dividas.filter(d => !d.situacao)
@@ -33,9 +34,10 @@ export default function App() {
     }
 
     function handleSalvarCliente(novo) {
-        setClientes(prev => [...prev, {...novo, id: Date.now().toString()}])
+        setClientes(prev => [...prev, { ...novo, id: Date.now().toString() }])
         setMostrarFormCliente(false)
         setRefreshClientes(c => c + 1)
+        setRefreshDividas(d => d + 1)
     }
 
     async function handleSalvarDivida({clienteId, descricao, valor}) {
@@ -55,6 +57,8 @@ export default function App() {
             ])
             setMostrarFormDivida(false)
             setPerfilAberto(true)
+            setRefreshDividas(d => d + 1)
+            setRefreshClientes(c => c + 1)
             setErro('')
         } else {
             const msg = typeof data === 'string' ? data : JSON.stringify(data)
@@ -78,6 +82,8 @@ export default function App() {
                         : d
                 )
             )
+            setRefreshDividas(d => d + 1)
+            setRefreshClientes(c => c + 1)
         } else {
             const msg = typeof data === 'string' ? data : JSON.stringify(data)
             setErro(`Erro ${status}: ${msg}`)
@@ -98,6 +104,7 @@ async function handleExcluirCliente(id) {
             setPerfilAberto(false)
             setClienteSelecionado(null)
             setRefreshClientes(c => c + 1)
+            setRefreshDividas(d => d + 1)
         } else {
             const msg = typeof data === 'string' ? data : JSON.stringify(data)
             setErro(`Erro ${status}: ${msg}`)
@@ -173,7 +180,7 @@ async function handleExcluirCliente(id) {
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {telaAtiva === 'dashboard' && (
-                    <Dividas />
+                    <Dividas refreshKey={refreshDividas} />
                 )}
                 {telaAtiva === 'clientes' && (
                     <ClientesList

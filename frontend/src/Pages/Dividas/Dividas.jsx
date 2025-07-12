@@ -4,7 +4,7 @@ import { fetchDashboardStats } from '../../services/dashboardService'
 import Dashboard from '../../components/Dashboard'
 
 const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5057'
-export default function Dividas({ onMarcarPago }) {
+export default function Dividas({ onMarcarPago, refreshKey }) {
     const [dividas, setDividas] = useState([])
     const [page, setPage] = useState(1)
     const [stats, setStats] = useState({
@@ -42,7 +42,7 @@ export default function Dividas({ onMarcarPago }) {
         }
         loadStats()
         loadDividas()
-    }, [page])
+    }, [page, refreshKey])
 
     const ordenadas = useMemo(
         () => [...dividas].sort((a, b) => b.valor - a.valor),
