@@ -35,6 +35,7 @@ namespace VendaApi.Controllers
                 .Select(d => new DividasDTO
                 {
                     ClienteId = d.Cliente.Id,
+                    ClienteNome = d.Cliente.NomeCompleto,
                     Id = d.Id,
                     Valor = d.Valor,
                     Situacao = d.Situacao,
@@ -69,6 +70,7 @@ namespace VendaApi.Controllers
                 var resultDto = new DividasDTO
                 {
                     ClienteId = clienteId,
+                    ClienteNome = criada.Cliente.NomeCompleto,
                     Id = criada.Id,
                     Valor = criada.Valor,
                     Situacao = criada.Situacao,
@@ -109,6 +111,7 @@ namespace VendaApi.Controllers
             var dto = new DividasDTO
             {
                 ClienteId = d.Cliente.Id,
+                ClienteNome = d.Cliente.NomeCompleto,
                 Id = d.Id,
                 Valor = d.Valor,
                 Situacao = d.Situacao,

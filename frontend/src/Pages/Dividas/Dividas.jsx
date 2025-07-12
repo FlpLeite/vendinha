@@ -7,6 +7,7 @@ const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5057'
 export default function Dividas({ onMarcarPago, refreshKey }) {
     const [dividas, setDividas] = useState([])
     const [page, setPage] = useState(1)
+    const [filtro, setFiltro] = useState('todas')
     const [stats, setStats] = useState({
         totalClientes: 0,
         totalDividas: 0,
@@ -45,24 +46,56 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
     }, [page, refreshKey])
 
     const ordenadas = useMemo(
-        () => [...dividas].sort((a, b) => b.valor - a.valor),
+        () =>
+            [...dividas].sort((a, b) => {
+                const nA = (a.clienteNome ?? '').toLowerCase()
+                const nB = (b.clienteNome ?? '').toLowerCase()
+                if (nA < nB) return -1
+                if (nA > nB) return 1
+                return new Date(b.dataCriacao) - new Date(a.dataCriacao)
+            }),
         [dividas]
     )
 
+    const filtradas = useMemo(
+        () =>
+            ordenadas.filter(d => {
+                if (filtro === 'pendentes') return !d.situacao
+                if (filtro === 'pagas') return d.situacao
+                return true
+            }),
+        [ordenadas, filtro]
+    )
+
     const total = useMemo(
-        () => ordenadas.reduce((sum, d) => sum + d.valor, 0),
-        [ordenadas]
+        () => filtradas.reduce((sum, d) => sum + d.valor, 0),
+        [filtradas]
     )
 
     return (
         <div className="text-white space-y-6">
             <Dashboard stats={stats} />
-
-            <h2 className="text-2xl font-bold">Dívidas</h2>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h2 className="text-2xl font-bold">Dívidas</h2>
+                <div className="flex gap-2">
+                    {['todas', 'pendentes', 'pagas'].map(f => (
+                        <button
+                            key={f}
+                            onClick={() => setFiltro(f)}
+                            className={`px-3 py-1.5 rounded-full text-sm font-medium capitalize ${
+                                filtro === f ? 'bg-emerald-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                            }`}
+                        >
+                            {f}
+                        </button>
+                    ))}
+                </div>
+            </div>
             <div className="overflow-x-auto">
                 <table className="min-w-full bg-gray-800 rounded-lg overflow-hidden border border-gray-700">
                     <thead className="bg-gray-700 text-left">
                     <tr>
+                        <th className="px-4 py-2">Nome</th>
                         <th className="px-4 py-2">Descrição</th>
                         <th className="px-4 py-2 text-right">Valor (R$)</th>
                         <th className="px-4 py-2">Data</th>
@@ -72,8 +105,9 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
                     </thead>
 
                     <tbody>
-                    {ordenadas.map(divida => (
+                    {filtradas.map(divida => (
                         <tr key={divida.id} className="border-t border-gray-700">
+                            <td className="px-4 py-2">{divida.clienteNome}</td>
                             <td className="px-4 py-2">{divida.descricao}</td>
                             <td className="px-4 py-2 text-right">
                                 R$ {divida.valor.toFixed(2)}
@@ -109,7 +143,7 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
                     {ordenadas.length === 0 && (
                         <tr>
                             <td
-                                colSpan={5}
+                                colSpan={6}
                                 className="py-6 text-center text-gray-400"
                             >
                                 Nenhuma dívida encontrada.
@@ -119,6 +153,13 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
                     </tbody>
 
                     <tfoot className="bg-gray-700 font-semibold">
+                    <tr>
+                        <td className="px-4 py-2 text-right" colSpan={2}>Total:</td>
+                        <td className="px-4 py-2 text-right" colSpan={3}>
+                            R$ {total.toFixed(2)}
+                        </td>
+                        <td />
+                    </tr>
                     </tfoot>
                 </table>
             </div>
