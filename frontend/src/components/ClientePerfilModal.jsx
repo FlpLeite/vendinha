@@ -351,8 +351,9 @@ export default function ClientePerfilModal({
                                         {item.tipo === 'pagamento' ? '-' : '+'}R${' '}
                                         {item.valor.toFixed(2)}
                                     </p>
-                                    {item.tipo === 'divida' && item.status === 'pendente' && (<button
-                                        onClick={() => onMarcarPago(item.id)}
+                                    {item.tipo === 'divida' && item.status === 'pendente' && (
+                                        <button
+                                        onClick={() => onMarcarPago(cliente.id, item.id ?? item.Id)}
                                         className="mt-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-sm shadow-lg flex items-center gap-1"
                                     >
                                         <Check className="h-3 w-3"/>

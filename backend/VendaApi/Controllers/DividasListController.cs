@@ -29,6 +29,7 @@ namespace VendaApi.Controllers
                 .Take(pageSize)
                 .Select(d => new DividasDTO
                 {
+                    ClienteId = d.Cliente.Id,
                     Id = d.Id,
                     Valor = d.Valor,
                     Situacao = d.Situacao,

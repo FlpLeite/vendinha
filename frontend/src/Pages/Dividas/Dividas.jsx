@@ -95,7 +95,7 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
                             <td className="px-4 py-2 text-center">
                                 {!divida.situacao && (
                                     <button
-                                        onClick={() => onMarcarPago(divida.id)}
+                                        onClick={() => onMarcarPago(divida.clienteId ?? divida.ClienteId, divida.id ?? divida.Id)}
                                         title="Marcar como pago"
                                         className="hover:text-green-400"
                                     >

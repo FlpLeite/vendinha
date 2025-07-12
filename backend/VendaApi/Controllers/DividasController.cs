@@ -34,6 +34,7 @@ namespace VendaApi.Controllers
                 .Where(d => d.Cliente.Id == clienteId)
                 .Select(d => new DividasDTO
                 {
+                    ClienteId = d.Cliente.Id,
                     Id = d.Id,
                     Valor = d.Valor,
                     Situacao = d.Situacao,
@@ -67,6 +68,7 @@ namespace VendaApi.Controllers
 
                 var resultDto = new DividasDTO
                 {
+                    ClienteId = clienteId,
                     Id = criada.Id,
                     Valor = criada.Valor,
                     Situacao = criada.Situacao,
@@ -106,6 +108,7 @@ namespace VendaApi.Controllers
 
             var dto = new DividasDTO
             {
+                ClienteId = d.Cliente.Id,
                 Id = d.Id,
                 Valor = d.Valor,
                 Situacao = d.Situacao,

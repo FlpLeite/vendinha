@@ -66,22 +66,22 @@ export default function App() {
         }
     }
 
-    async function handleMarcarPago(id) {
-        if (!clienteSelecionado) return
-
-        const {status, data} = await pagarDivida(clienteSelecionado.id, id)
+    async function handleMarcarPago(clienteId, id) {
+        const {status, data} = await pagarDivida(clienteId, id)
         if (status === 200) {
-            setDividas(prev =>
-                prev.map(d =>
-                    d.id === id
-                        ? {
-                            ...d,
-                            situacao: true,
-                            dataPagamento: data.dataPagamento,
-                        }
-                        : d
+            if (clienteSelecionado && clienteSelecionado.id === clienteId) {
+                setDividas(prev =>
+                    prev.map(d =>
+                        d.id === id
+                            ? {
+                                ...d,
+                                situacao: true,
+                                dataPagamento: data.dataPagamento,
+                            }
+                            : d
+                    )
                 )
-            )
+            }
             setRefreshDividas(d => d + 1)
             setRefreshClientes(c => c + 1)
         } else {
@@ -180,7 +180,7 @@ async function handleExcluirCliente(id) {
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {telaAtiva === 'dashboard' && (
-                    <Dividas refreshKey={refreshDividas} />
+                    <Dividas onMarcarPago={handleMarcarPago} refreshKey={refreshDividas} />
                 )}
                 {telaAtiva === 'clientes' && (
                     <ClientesList

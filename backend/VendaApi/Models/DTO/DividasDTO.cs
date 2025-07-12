@@ -6,6 +6,7 @@ namespace VendaApi.Models.Dtos
     public class DividasDTO
     {
         public int Id { get; set; }
+        public int ClienteId { get; set; }
         [Required(ErrorMessage = "O Valor da dívida é obrigatório.")]
         [Range(0.01, double.MaxValue, ErrorMessage = "O Valor deve ser maior que zero.")]
         public decimal Valor { get; set; }
