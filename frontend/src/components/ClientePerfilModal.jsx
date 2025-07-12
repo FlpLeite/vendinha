@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {
-    X, User, Mail, CreditCard, Phone, MapPin, Calendar, Plus, DollarSign, Check, Clock, Trash, Pencil, Save,
+    X, User, Mail, CreditCard, Calendar, Plus, DollarSign, Check, Clock, Trash, Pencil, Save,
 } from 'lucide-react'
 import { atualizarCliente } from '../services/clienteService'
 
@@ -10,7 +10,6 @@ export default function ClientePerfilModal({
     pagamentos = [],
     onClose,
     onNovaDivida,
-    onNovoPagamento,
     onMarcarPago,
     onExcluirCliente,
     onAtualizarCliente,
