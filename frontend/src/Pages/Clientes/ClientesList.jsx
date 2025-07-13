@@ -9,6 +9,7 @@ export default function ClientesList({onNovoCliente, onClienteSelect, refreshKey
     const busca = useDebounce(buscaInput, 500)
     const [page, setPage] = useState(1)
     const [totalDebtSum, setTotalDebtSum] = useState(0)
+    const [isLastPage, setIsLastPage] = useState(false)
     const [loading, setLoading] = useState(false)
 
     const fetchClientes = async () => {
@@ -17,8 +18,11 @@ export default function ClientesList({onNovoCliente, onClienteSelect, refreshKey
             const resultado = await listarClientes(busca, page)
             if (resultado.status === 200) {
                 const json = resultado.data
-                setClientes(json.items ?? json.Items ?? [])
+                const items = json.items ?? json.Items ?? []
+                const size = json.pageSize ?? json.PageSize ?? 9
+                setClientes(items)
                 setTotalDebtSum(json.totalDebtSum ?? json.TotalDebtSum ?? 0)
+                setIsLastPage(items.length < size)
             }
         } catch (err) {
             console.error('Erro ao buscar clientes:', err)
@@ -130,8 +134,9 @@ export default function ClientesList({onNovoCliente, onClienteSelect, refreshKey
                         ◀ Anterior
                     </button>
                     <button
+                        disabled={isLastPage}
                         onClick={() => setPage(p => p + 1)}
-                        className="px-4 py-2 bg-gray-700 rounded"
+                        className="px-4 py-2 bg-gray-700 rounded disabled:opacity-50"
                     >
                         Próxima ▶
                     </button>

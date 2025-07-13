@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState, useRef } from 'react'
+import React, { useMemo, useEffect, useState } from 'react'
 import { Check, Search } from 'lucide-react'
 import useDebounce from '../../hooks/useDebounce'
 import { fetchDashboardStats } from '../../services/dashboardService'
@@ -9,7 +9,6 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
     const [dividas, setDividas] = useState([])
     const [page, setPage] = useState(1)
     const [hasMore, setHasMore] = useState(true)
-    const loadMoreRef = useRef(null)
     const [buscaInput, setBuscaInput] = useState('')
     const busca = useDebounce(buscaInput, 500)
     const [filtro, setFiltro] = useState('todas')
@@ -54,19 +53,7 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
         loadDividas()
     }, [page, refreshKey])
 
-    useEffect(() => {
-        if (!hasMore) return
-        const observer = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting) {
-                setPage(p => p + 1)
-            }
-        })
-        const el = loadMoreRef.current
-        if (el) observer.observe(el)
-        return () => {
-            if (el) observer.unobserve(el)
-        }
-    }, [hasMore])
+    const handleCarregarMais = () => setPage(p => p + 1)
 
     const ordenadas = useMemo(
         () =>
@@ -186,8 +173,6 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
                         </tr>
                     ))}
 
-                    <tr ref={loadMoreRef}></tr>
-
                     {ordenadas.length === 0 && (
                         <tr>
                             <td
@@ -210,6 +195,16 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
                     </tr>
                     </tfoot>
                 </table>
+                {hasMore && (
+                    <div className="p-4 text-center">
+                        <button
+                            onClick={handleCarregarMais}
+                            className="px-4 py-2 bg-gray-700 rounded hover:bg-gray-600"
+                        >
+                            Carregar mais
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     )
