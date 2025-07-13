@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from 'react'
+import React, { useMemo, useEffect, useState, useRef } from 'react'
 import { Check, Search } from 'lucide-react'
 import useDebounce from '../../hooks/useDebounce'
 import { fetchDashboardStats } from '../../services/dashboardService'
@@ -8,6 +8,8 @@ const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5057'
 export default function Dividas({ onMarcarPago, refreshKey }) {
     const [dividas, setDividas] = useState([])
     const [page, setPage] = useState(1)
+    const [hasMore, setHasMore] = useState(true)
+    const loadMoreRef = useRef(null)
     const [buscaInput, setBuscaInput] = useState('')
     const busca = useDebounce(buscaInput, 500)
     const [filtro, setFiltro] = useState('todas')
@@ -39,7 +41,11 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
             try {
                 const res = await fetch(`${baseUrl}/api/dividas?page=${page}`)
                 const data = await res.json()
-                if (res.ok) setDividas(data.items ?? data.Items ?? data)
+                if (res.ok) {
+                    const items = data.items ?? data.Items ?? data
+                    setDividas(prev => (page === 1 ? items : [...prev, ...items]))
+                    if ((items?.length ?? 0) < 10) setHasMore(false)
+                }
             } catch (err) {
                 console.error('Erro ao buscar dívidas:', err)
             }
@@ -47,6 +53,20 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
         loadStats()
         loadDividas()
     }, [page, refreshKey])
+
+    useEffect(() => {
+        if (!hasMore) return
+        const observer = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting) {
+                setPage(p => p + 1)
+            }
+        })
+        const el = loadMoreRef.current
+        if (el) observer.observe(el)
+        return () => {
+            if (el) observer.unobserve(el)
+        }
+    }, [hasMore])
 
     const ordenadas = useMemo(
         () =>
@@ -87,7 +107,12 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
                     {['todas', 'pendentes', 'pagas'].map(f => (
                         <button
                             key={f}
-                            onClick={() => setFiltro(f)}
+                            onClick={() => {
+                                setFiltro(f)
+                                setPage(1)
+                                setHasMore(true)
+                                setDividas([])
+                            }}
                             className={`px-3 py-1.5 rounded-full text-sm font-medium capitalize ${
                                 filtro === f ? 'bg-emerald-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                             }`}
@@ -106,11 +131,13 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
                     onChange={e => {
                         setBuscaInput(e.target.value)
                         setPage(1)
+                        setHasMore(true)
+                        setDividas([])
                     }}
                     className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-emerald-500 text-white placeholder-gray-400 duration-200"
                 />
             </div>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto overflow-y-auto max-h-[60vh]">
                 <table className="min-w-full bg-gray-800 rounded-lg overflow-hidden border border-gray-700">
                     <thead className="bg-gray-700 text-left">
                     <tr>
@@ -159,6 +186,8 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
                         </tr>
                     ))}
 
+                    <tr ref={loadMoreRef}></tr>
+
                     {ordenadas.length === 0 && (
                         <tr>
                             <td
@@ -181,21 +210,6 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
                     </tr>
                     </tfoot>
                 </table>
-            </div>
-            <div className="mt-4 space-x-2">
-                <button
-                    disabled={page === 1}
-                    onClick={() => setPage(p => Math.max(p - 1, 1))}
-                    className="px-4 py-2 bg-gray-700 rounded disabled:opacity-50"
-                >
-                    ◀ Anterior
-                </button>
-                <button
-                    onClick={() => setPage(p => p + 1)}
-                    className="px-4 py-2 bg-gray-700 rounded"
-                >
-                    Próxima ▶
-                </button>
             </div>
         </div>
     )

@@ -19,7 +19,7 @@ namespace VendaApi.Controllers
         [HttpGet]
         public IActionResult Get([FromQuery] int page = 1)
         {
-            const int pageSize = 8;
+            const int pageSize = 10;
 
             var query = _session.Query<Dividas>();
 
