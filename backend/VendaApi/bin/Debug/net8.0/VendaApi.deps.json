@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v8.0": {
       "VendaApi/1.0.0": {
         "dependencies": {
+          "Cpf.Cnpj": "1.0.2",
           "FluentNHibernate": "3.4.1",
           "NHibernate": "5.5.2",
           "Npgsql": "9.0.3",
@@ -25,6 +26,14 @@
           "lib/netstandard1.1/Antlr3.Runtime.dll": {
             "assemblyVersion": "3.5.0.2",
             "fileVersion": "3.5.1.0"
+          }
+        }
+      },
+      "Cpf.Cnpj/1.0.2": {
+        "runtime": {
+          "lib/netstandard2.0/Library.dll": {
+            "assemblyVersion": "1.0.2.0",
+            "fileVersion": "1.0.2.0"
           }
         }
       },
@@ -989,6 +998,13 @@
       "sha512": "sha512-ZwCEpLCLZXkjzf1lYEixp9hgVlYYk33ACHn6xjFyVhGRi2BpoYQez0qtatbetdylASWYTG+cGz0CGR4z66JM4w==",
       "path": "antlr3.runtime/3.5.1",
       "hashPath": "antlr3.runtime.3.5.1.nupkg.sha512"
+    },
+    "Cpf.Cnpj/1.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-h7CLzBwP8sDKLMhYiiU77pbSWTtgOk+UUwB1SLs+l93RSEzIov/6bH8H8YkZGCri9l+ETkzV6Qfxf1cahUfpzw==",
+      "path": "cpf.cnpj/1.0.2",
+      "hashPath": "cpf.cnpj.1.0.2.nupkg.sha512"
     },
     "FluentNHibernate/3.4.1": {
       "type": "package",

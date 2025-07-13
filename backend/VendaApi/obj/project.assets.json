@@ -18,6 +18,15 @@
           }
         }
       },
+      "Cpf.Cnpj/1.0.2": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Library.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Library.dll": {}
+        }
+      },
       "FluentNHibernate/3.4.1": {
         "type": "package",
         "dependencies": {
@@ -1771,6 +1780,20 @@
         "lib/netstandard1.1/Antlr3.Runtime.xml",
         "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Antlr3.Runtime.dll",
         "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Antlr3.Runtime.xml"
+      ]
+    },
+    "Cpf.Cnpj/1.0.2": {
+      "sha512": "h7CLzBwP8sDKLMhYiiU77pbSWTtgOk+UUwB1SLs+l93RSEzIov/6bH8H8YkZGCri9l+ETkzV6Qfxf1cahUfpzw==",
+      "type": "package",
+      "path": "cpf.cnpj/1.0.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README nuget.md",
+        "cpf.cnpj.1.0.2.nupkg.sha512",
+        "cpf.cnpj.nuspec",
+        "lib/netstandard2.0/Library.dll",
+        "logo.png"
       ]
     },
     "FluentNHibernate/3.4.1": {
@@ -5807,6 +5830,7 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "Cpf.Cnpj >= 1.0.2",
       "FluentNHibernate >= 3.4.1",
       "NHibernate >= 5.5.2",
       "Npgsql >= 9.0.3",
@@ -5814,7 +5838,8 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\felip\\.nuget\\packages\\": {}
+    "C:\\Users\\felip\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
@@ -5825,8 +5850,12 @@
       "packagesPath": "C:\\Users\\felip\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\felip\\OneDrive\\Documentos\\Vendinha\\backend\\VendaApi\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
         "C:\\Users\\felip\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -5851,12 +5880,17 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "9.0.300"
     },
     "frameworks": {
       "net8.0": {
         "targetAlias": "net8.0",
         "dependencies": {
+          "Cpf.Cnpj": {
+            "target": "Package",
+            "version": "[1.0.2, )"
+          },
           "FluentNHibernate": {
             "target": "Package",
             "version": "[3.4.1, )"
@@ -5885,24 +5919,6 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[8.0.8, 8.0.8]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Host.win-x64",
-            "version": "[8.0.8, 8.0.8]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Ref",
-            "version": "[8.0.8, 8.0.8]"
-          },
-          {
-            "name": "Microsoft.WindowsDesktop.App.Ref",
-            "version": "[8.0.8, 8.0.8]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -5911,7 +5927,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.402/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

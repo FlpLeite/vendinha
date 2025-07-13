@@ -3,6 +3,7 @@ using VendaApi.Models;
 using VendaApi.Models.Dtos;
 using System.Linq;
 using VendaApi.Controllers;
+using CpfCnpjLibrary;
 
 namespace VendaApi.Controllers
 {
@@ -89,6 +90,9 @@ namespace VendaApi.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] ClientesDTO dto)
         {
+            if (!Cpf.Validar(dto.Cpf))
+                return BadRequest(new { error = "CPF inválido de acordo com os padrões." });
+
             var c = new Clientes
             {
                 NomeCompleto = dto.NomeCompleto,
@@ -110,6 +114,8 @@ namespace VendaApi.Controllers
         {
             var c = _session.Get<Clientes>(id);
             if (c == null) return NotFound();
+            if (!Cpf.Validar(dto.Cpf))
+                return BadRequest(new { error = "CPF inválido de acordo com os padrões." });
 
             c.NomeCompleto = dto.NomeCompleto;
             c.Cpf = dto.Cpf;

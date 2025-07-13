@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Cpf.Cnpj" Version="1.0.2" />
     <PackageReference Include="FluentNHibernate" Version="3.4.1" />
     <PackageReference Include="NHibernate" Version="5.5.2" />
     <PackageReference Include="Npgsql" Version="9.0.3" />

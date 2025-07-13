@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "IZBUwXeMNso=",
+  "dgSpecHash": "OX32WzxPMVo=",
   "success": true,
   "projectFilePath": "C:\\Users\\felip\\OneDrive\\Documentos\\Vendinha\\backend\\VendaApi\\VendaApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\felip\\.nuget\\packages\\antlr3.runtime\\3.5.1\\antlr3.runtime.3.5.1.nupkg.sha512",
+    "C:\\Users\\felip\\.nuget\\packages\\cpf.cnpj\\1.0.2\\cpf.cnpj.1.0.2.nupkg.sha512",
     "C:\\Users\\felip\\.nuget\\packages\\fluentnhibernate\\3.4.1\\fluentnhibernate.3.4.1.nupkg.sha512",
     "C:\\Users\\felip\\.nuget\\packages\\iesi.collections\\4.0.4\\iesi.collections.4.0.4.nupkg.sha512",
     "C:\\Users\\felip\\.nuget\\packages\\microsoft.extensions.apidescription.server\\8.0.0\\microsoft.extensions.apidescription.server.8.0.0.nupkg.sha512",
@@ -101,11 +102,7 @@
     "C:\\Users\\felip\\.nuget\\packages\\system.threading.timer\\4.3.0\\system.threading.timer.4.3.0.nupkg.sha512",
     "C:\\Users\\felip\\.nuget\\packages\\system.windows.extensions\\6.0.0\\system.windows.extensions.6.0.0.nupkg.sha512",
     "C:\\Users\\felip\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
-    "C:\\Users\\felip\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512",
-    "C:\\Users\\felip\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.8\\microsoft.netcore.app.ref.8.0.8.nupkg.sha512",
-    "C:\\Users\\felip\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.8\\microsoft.windowsdesktop.app.ref.8.0.8.nupkg.sha512",
-    "C:\\Users\\felip\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.8\\microsoft.aspnetcore.app.ref.8.0.8.nupkg.sha512",
-    "C:\\Users\\felip\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\8.0.8\\microsoft.netcore.app.host.win-x64.8.0.8.nupkg.sha512"
+    "C:\\Users\\felip\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512"
   ],
   "logs": []
 }
