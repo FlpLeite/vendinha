@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect, useState } from 'react'
-import { Check } from 'lucide-react'
+import { Check, Search } from 'lucide-react'
+import useDebounce from '../../hooks/useDebounce'
 import { fetchDashboardStats } from '../../services/dashboardService'
 import Dashboard from '../../components/Dashboard'
 
@@ -7,6 +8,8 @@ const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5057'
 export default function Dividas({ onMarcarPago, refreshKey }) {
     const [dividas, setDividas] = useState([])
     const [page, setPage] = useState(1)
+    const [buscaInput, setBuscaInput] = useState('')
+    const busca = useDebounce(buscaInput, 500)
     const [filtro, setFiltro] = useState('todas')
     const [stats, setStats] = useState({
         totalClientes: 0,
@@ -60,11 +63,14 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
     const filtradas = useMemo(
         () =>
             ordenadas.filter(d => {
-                if (filtro === 'pendentes') return !d.situacao
-                if (filtro === 'pagas') return d.situacao
-                return true
+                const matchNome = d.clienteNome
+                    ?.toLowerCase()
+                    .includes(busca.toLowerCase())
+                if (filtro === 'pendentes') return !d.situacao && matchNome
+                if (filtro === 'pagas') return d.situacao && matchNome
+                return matchNome
             }),
-        [ordenadas, filtro]
+        [ordenadas, filtro, busca]
     )
 
     const total = useMemo(
@@ -90,6 +96,19 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
                         </button>
                     ))}
                 </div>
+            </div>
+            <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+                <input
+                    type="text"
+                    placeholder="Buscar dívidas por nome do cliente..."
+                    value={buscaInput}
+                    onChange={e => {
+                        setBuscaInput(e.target.value)
+                        setPage(1)
+                    }}
+                    className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-emerald-500 text-white placeholder-gray-400 duration-200"
+                />
             </div>
             <div className="overflow-x-auto">
                 <table className="min-w-full bg-gray-800 rounded-lg overflow-hidden border border-gray-700">

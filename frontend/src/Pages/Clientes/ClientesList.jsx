@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from 'react'
+import useDebounce from '../../hooks/useDebounce'
 import {Search, Plus, User, Phone, MapPin, Calendar} from 'lucide-react'
 import {listarClientes} from '../../services/clienteService'
 
 export default function ClientesList({onNovoCliente, onClienteSelect, refreshKey}) {
     const [clientes, setClientes] = useState([])
-    const [busca, setBusca] = useState('')
+    const [buscaInput, setBuscaInput] = useState('')
+    const busca = useDebounce(buscaInput, 500)
     const [page, setPage] = useState(1)
     const [totalDebtSum, setTotalDebtSum] = useState(0)
     const [loading, setLoading] = useState(false)
@@ -26,12 +28,13 @@ export default function ClientesList({onNovoCliente, onClienteSelect, refreshKey
     }
 
     useEffect(() => {
-        const timeout = setTimeout(fetchClientes, 500)
-        return () => clearTimeout(timeout)
+        fetchClientes()
     }, [busca, page, refreshKey])
 
-    const filtrados = clientes.filter(c => c.nomeCompleto.toLowerCase().includes(busca.toLowerCase()) || (c.telefone && c.telefone.includes(busca)))
-
+    const filtrados = clientes.filter(c =>
+        c.nomeCompleto.toLowerCase().includes(busca.toLowerCase()) ||
+        (c.telefone && c.telefone.includes(busca))
+    )
     const getValorPendente = id => clientes
         .find(c => c.id === id)?.totalDebt ?? 0
 
@@ -52,9 +55,9 @@ export default function ClientesList({onNovoCliente, onClienteSelect, refreshKey
             <input
                 type="text"
                 placeholder="Buscar cliente por nome ou telefone..."
-                value={busca}
+                value={buscaInput}
                 onChange={e => {
-                    setBusca(e.target.value)
+                    setBuscaInput(e.target.value)
                     setPage(1)
                 }}
                 className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-emerald-500 text-white placeholder-gray-400 duration-200"
