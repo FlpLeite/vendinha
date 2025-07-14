@@ -68,7 +68,9 @@ export default function ClientePerfilModal({
         descricao: d.descricao,
         valor: d.valor,
         status: d.situacao ? 'pago' : 'pendente',
-        data: d.dataCriacao
+        dataCriacao: d.dataCriacao,
+        dataPagamento: d.dataPagamento,
+        data: d.dataCriacao,
     })), ...pagamentosCliente.map(p => ({
         id: p.id,
         tipo: 'pagamento',
@@ -341,8 +343,18 @@ export default function ClientePerfilModal({
                                     </div>
                                     <div className="flex items-center gap-2 text-sm text-gray-400 ml-12">
                                         <Calendar className="h-4 w-4"/>
-                                        <div>Dívida feita em:</div>
-                                        {new Date(item.data).toLocaleDateString('pt-BR')}
+                                        <div>
+                                            {item.tipo === 'divida' && item.status === 'pago'
+                                                ? 'Pago em:'
+                                                : item.tipo === 'pagamento'
+                                                    ? 'Pago em:'
+                                                    : 'Dívida feita em:'}
+                                        </div>
+                                        {item.tipo === 'divida' && item.status === 'pago'
+                                            ? new Date(item.dataPagamento).toLocaleDateString('pt-BR')
+                                            : item.tipo === 'pagamento'
+                                                ? new Date(item.data).toLocaleDateString('pt-BR')
+                                                : new Date(item.dataCriacao).toLocaleDateString('pt-BR')}
                                     </div>
                                 </div>
                                 <div className="text-right ml-4">
