@@ -63,9 +63,10 @@ export default function ClienteForm({onSave, onCancel}) {
                     type="text"
                     required
                     pattern="\d{11}"
-                    title="Exatamente 11 dígitos numéricos"
+                    title="Exatamente 11 números"
+                    maxLength={11}
                     value={cpf}
-                    onChange={e => setCpf(e.target.value)}
+                    onChange={e => setCpf(e.target.value.slice(0, 11))}
                     className="w-full bg-gray-700 p-2 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
             </div>

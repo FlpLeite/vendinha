@@ -49,6 +49,12 @@ export async function pagarDivida(clienteId, id, usuarioId) {
     return { status: res.status, data }
 }
 
+export async function obterCliente(id) {
+    const res = await fetch(`${baseUrl}/api/clientes/${id}`)
+    const data = await res.json().catch(() => ({}))
+    return { status: res.status, data }
+}
+
 export async function excluirCliente(id) {
     const res = await fetch(`${baseUrl}/api/clientes/${id}`, { method: 'DELETE' })
     const text = await res.text()

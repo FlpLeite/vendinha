@@ -5,11 +5,12 @@ import ClientesList from './Pages/Clientes/ClientesList'
 import ClienteForm from './components/ClienteForm'
 import DividaForm from './components/DividaForm'
 import ClientePerfilModal from './components/ClientePerfilModal'
-import {criarDivida, listarDividas, pagarDivida, excluirCliente, atualizarCliente,} from './services/clienteService'
+import {criarDivida, listarDividas, pagarDivida, excluirCliente, atualizarCliente,  obterCliente} from './services/clienteService'
 import LoginForm from './Pages/Auth/LoginForm'
 import CadastroForm from './Pages/Auth/CadastroForm'
 import { login as loginUsuario, cadastrar as cadastrarUsuario } from './services/usuarioService'
 import ErrorModal from './components/ErroModal'
+import ReciboModal from './components/ReciboModal'
 
 export default function App() {
     const [usuario, setUsuario] = useState(() => {
@@ -29,6 +30,7 @@ export default function App() {
     const [erro, setErro] = useState('')
     const [refreshClientes, setRefreshClientes] = useState(0)
     const [refreshDividas, setRefreshDividas] = useState(0)
+    const [reciboInfo, setReciboInfo] = useState(null)
 
     async function handleLogin(dados) {
         const { status, data } = await loginUsuario(dados.email, dados.password)
@@ -125,6 +127,21 @@ export default function App() {
             }
             setRefreshDividas(d => d + 1)
             setRefreshClientes(c => c + 1)
+
+            let cliente = clientes.find(c => c.id === clienteId)
+            if (!cliente) {
+                const res = await obterCliente(clienteId)
+                if (res.status === 200) cliente = res.data
+            }
+            setReciboInfo({
+                clienteNome: cliente?.nomeCompleto ?? data.clienteNome,
+                clienteCpf: cliente?.cpf,
+                descricao: data.descricao,
+                valor: data.valor,
+                dataCompra: data.dataCriacao,
+                dataPagamento: data.dataPagamento,
+                atendenteNome: usuario.nome,
+            })
         } else {
             const msg = typeof data === 'string' ? data : JSON.stringify(data)
             setErro(`Erro ${status}: ${msg}`)
@@ -180,10 +197,15 @@ async function handleExcluirCliente(id) {
     const stats = calcularStats()
 
     if (!usuario) {
-        return mostrarCadastro ? (
-            <CadastroForm onCadastro={handleCadastro} onToggleForm={() => setMostrarCadastro(false)} />
-        ) : (
-            <LoginForm onLogin={handleLogin} onToggleForm={() => setMostrarCadastro(true)} />
+        return (
+            <>
+                {mostrarCadastro ? (
+                    <CadastroForm onCadastro={handleCadastro} onToggleForm={() => setMostrarCadastro(false)} />
+                ) : (
+                    <LoginForm onLogin={handleLogin} onToggleForm={() => setMostrarCadastro(true)} />
+                )}
+                {erro && <ErrorModal message={erro} onClose={() => setErro('')} />}
+            </>
         )
     }
 
@@ -278,6 +300,9 @@ async function handleExcluirCliente(id) {
             )}
             {erro && (
                 <ErrorModal message={erro} onClose={() => setErro('')}/>
+            )}
+            {reciboInfo && (
+                <ReciboModal recibo={reciboInfo} onClose={() => setReciboInfo(null)} />
             )}
         </div>
     )
