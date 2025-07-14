@@ -14,6 +14,7 @@ builder.Services.AddSingleton<ISessionFactory>(sp =>
 {
     var connString = builder.Configuration
         .GetConnectionString("DefaultConnection");
+    Console.WriteLine("CONN STRING: " + connString);
 
     return Fluently.Configure()
         .Database(PostgreSQLConfiguration.Standard
