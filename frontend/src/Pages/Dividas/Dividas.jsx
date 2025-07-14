@@ -94,12 +94,7 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
                     {['todas', 'pendentes', 'pagas'].map(f => (
                         <button
                             key={f}
-                            onClick={() => {
-                                setFiltro(f)
-                                setPage(1)
-                                setHasMore(true)
-                                setDividas([])
-                            }}
+                            onClick={() => setFiltro(f)}
                             className={`px-3 py-1.5 rounded-full text-sm font-medium capitalize ${
                                 filtro === f ? 'bg-emerald-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                             }`}
