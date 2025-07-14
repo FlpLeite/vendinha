@@ -18,6 +18,16 @@ namespace VendaApi.Mappings
                 .Not.Nullable()
                 .Cascade.None();
 
+            References(x => x.CriadoPor)
+                .Column("criado_por_id")
+                .Nullable()
+                .Cascade.None();
+
+            References(x => x.PagoPor)
+                .Column("pago_por_id")
+                .Nullable()
+                .Cascade.None();
+
             Map(x => x.Valor)
                 .Column("valor")
                 .Not.Nullable();

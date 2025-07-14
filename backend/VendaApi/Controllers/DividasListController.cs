@@ -32,6 +32,8 @@ namespace VendaApi.Controllers
                     ClienteId = d.Cliente.Id,
                     ClienteNome = d.Cliente.NomeCompleto,
                     Id = d.Id,
+                    CriadoPorId = d.CriadoPor.Id,
+                    PagoPorId = d.PagoPor != null ? d.PagoPor.Id : (int?)null,
                     Valor = d.Valor,
                     Situacao = d.Situacao,
                     DataCriacao = d.DataCriacao,

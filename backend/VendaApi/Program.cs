@@ -22,6 +22,7 @@ builder.Services.AddSingleton<ISessionFactory>(sp =>
         .Mappings(m =>
         {
             m.FluentMappings.AddFromAssemblyOf<ClienteMap>();
+            m.FluentMappings.AddFromAssemblyOf<UsuarioMap>();
         })
         .BuildSessionFactory();
 });

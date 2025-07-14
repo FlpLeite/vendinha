@@ -5,6 +5,6 @@ namespace VendaApi.Services
 {
     public interface IClientesService
     {
-        Task<Dividas> CriarDividaAsync(int clienteId, Dividas novaDivida);
+        Task<Dividas> CriarDividaAsync(int clienteId, int usuarioId, Dividas novaDivida);
     }
 }

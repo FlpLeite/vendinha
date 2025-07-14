@@ -6,9 +6,17 @@ import ClienteForm from './components/ClienteForm'
 import DividaForm from './components/DividaForm'
 import ClientePerfilModal from './components/ClientePerfilModal'
 import {criarDivida, listarDividas, pagarDivida, excluirCliente, atualizarCliente,} from './services/clienteService'
+import LoginForm from './Pages/Auth/LoginForm'
+import CadastroForm from './Pages/Auth/CadastroForm'
+import { login as loginUsuario, cadastrar as cadastrarUsuario } from './services/usuarioService'
 import ErrorModal from './components/ErroModal'
 
 export default function App() {
+    const [usuario, setUsuario] = useState(() => {
+        const u = localStorage.getItem('usuario');
+        return u ? JSON.parse(u) : null;
+    })
+    const [mostrarCadastro, setMostrarCadastro] = useState(false)
     const [telaAtiva, setTelaAtiva] = useState('dashboard')
     const [clientes, setClientes] = useState([])
     const [dividas, setDividas] = useState([])
@@ -21,6 +29,39 @@ export default function App() {
     const [erro, setErro] = useState('')
     const [refreshClientes, setRefreshClientes] = useState(0)
     const [refreshDividas, setRefreshDividas] = useState(0)
+
+    async function handleLogin(dados) {
+        const { status, data } = await loginUsuario(dados.email, dados.password)
+        if (status === 200) {
+            setUsuario(data)
+            localStorage.setItem('usuario', JSON.stringify(data))
+        } else {
+            const msg = typeof data === 'string' ? data : JSON.stringify(data)
+            setErro(`Erro ${status}: ${msg}`)
+        }
+    }
+
+    async function handleCadastro(dados) {
+        const { status, data } = await cadastrarUsuario({
+            nome: dados.nome,
+            email: dados.email,
+            telefone: dados.telefone,
+            password: dados.password,
+        })
+        if (status === 200) {
+            setUsuario(data)
+            localStorage.setItem('usuario', JSON.stringify(data))
+            setMostrarCadastro(false)
+        } else {
+            const msg = typeof data === 'string' ? data : JSON.stringify(data)
+            setErro(`Erro ${status}: ${msg}`)
+        }
+    }
+
+    function handleLogout() {
+        setUsuario(null)
+        localStorage.removeItem('usuario')
+    }
 
     function calcularStats() {
         const pendentes = dividas.filter(d => !d.situacao)
@@ -41,7 +82,7 @@ export default function App() {
     }
 
     async function handleSalvarDivida({clienteId, descricao, valor}) {
-        const {status, data} = await criarDivida(clienteId, {descricao, valor})
+        const {status, data} = await criarDivida(clienteId, {descricao, valor, usuarioId: usuario.id})
         if (status === 201) {
             setDividas(prev => [
                 ...prev,
@@ -67,7 +108,7 @@ export default function App() {
     }
 
     async function handleMarcarPago(clienteId, id) {
-        const {status, data} = await pagarDivida(clienteId, id)
+        const {status, data} = await pagarDivida(clienteId, id, usuario.id)
         if (status === 200) {
             if (clienteSelecionado && clienteSelecionado.id === clienteId) {
                 setDividas(prev =>
@@ -138,6 +179,14 @@ async function handleExcluirCliente(id) {
 
     const stats = calcularStats()
 
+    if (!usuario) {
+        return mostrarCadastro ? (
+            <CadastroForm onCadastro={handleCadastro} onToggleForm={() => setMostrarCadastro(false)} />
+        ) : (
+            <LoginForm onLogin={handleLogin} onToggleForm={() => setMostrarCadastro(true)} />
+        )
+    }
+
     return (
         <div className="min-h-screen bg-gray-900">
             <header className="bg-gray-800 shadow-lg border-b border-gray-700">
@@ -152,7 +201,7 @@ async function handleExcluirCliente(id) {
                                 <p className="text-sm text-gray-300">Controle de Contas</p>
                             </div>
                         </div>
-                        <nav className="flex gap-1">
+                        <nav className="flex gap-1 items-center">
                             <button
                                 onClick={() => setTelaAtiva('dashboard')}
                                 className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 duration-200 ${
@@ -172,6 +221,12 @@ async function handleExcluirCliente(id) {
                                 }`}
                             >
                                 <Users className="h-4 w-4"/> Clientes
+                            </button>
+                            <button
+                                onClick={handleLogout}
+                                className="ml-4 px-3 py-1.5 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded"
+                            >
+                                Sair
                             </button>
                         </nav>
                     </div>

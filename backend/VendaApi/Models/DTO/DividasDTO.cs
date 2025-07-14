@@ -8,6 +8,8 @@ namespace VendaApi.Models.Dtos
         public int Id { get; set; }
         public int ClienteId { get; set; }
         public string? ClienteNome { get; set; }
+        public int CriadoPorId { get; set; }
+        public int? PagoPorId { get; set; }
 
         [Required(ErrorMessage = "O Valor da dívida é obrigatório.")]
         [Range(0.01, double.MaxValue, ErrorMessage = "O Valor deve ser maior que zero.")]

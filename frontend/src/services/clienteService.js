@@ -18,11 +18,11 @@ export async function criarCliente(dados) {
     return {status: res.status, data}
 }
 
-export async function criarDivida(clienteId, {descricao, valor}) {
+export async function criarDivida(clienteId, {descricao, valor, usuarioId}) {
     const res = await fetch(`${baseUrl}/clientes/${clienteId}/dividas`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({descricao, valor}),
+        body: JSON.stringify({descricao, valor, criadoPorId: usuarioId}),
     })
     const text = await res.text()
     let data
@@ -40,9 +40,9 @@ export async function listarDividas(clienteId) {
     return { status: res.status, data: json.dividas ?? [] }
 }
 
-export async function pagarDivida(clienteId, id) {
+export async function pagarDivida(clienteId, id, usuarioId) {
     const res = await fetch(
-        `${baseUrl}/clientes/${clienteId}/dividas/${id}/pagar`,
+        `${baseUrl}/clientes/${clienteId}/dividas/${id}/pagar?usuarioId=${usuarioId}`,
         { method: 'PUT' }
     )
     const data = await res.json().catch(() => ({}))

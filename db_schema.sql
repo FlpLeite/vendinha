@@ -16,6 +16,19 @@ CREATE TABLE divida (
                         descricao VARCHAR(255)
 );
 
+CREATE TABLE usuarios (
+                          id SERIAL PRIMARY KEY,
+                          nome VARCHAR(100) NOT NULL,
+                          email VARCHAR(100) NOT NULL UNIQUE,
+                          telefone VARCHAR(20),
+                          senha_hash VARCHAR(100) NOT NULL
+);
+
+
+ALTER TABLE dividas ADD COLUMN criado_por_id INTEGER REFERENCES usuarios(id);
+ALTER TABLE dividas ADD COLUMN pago_por_id   INTEGER REFERENCES usuarios(id);
+
+
 ALTER TABLE divida RENAME TO dividas;
 
 ALTER SEQUENCE cliente_id_seq RENAME TO clientes_id_seq;

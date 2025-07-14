@@ -199,7 +199,7 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
                     <div className="p-4 text-center">
                         <button
                             onClick={handleCarregarMais}
-                            className="px-4 py-2 bg-gray-700 rounded hover:bg-gray-600"
+                            className="px-4 py-2 bg-green-600 rounded hover:bg-green-900"
                         >
                             Carregar mais
                         </button>

@@ -16,11 +16,15 @@ namespace VendaApi.Services
             _session = session;
         }
 
-        public async Task<Dividas> CriarDividaAsync(int clienteId, Dividas novaDivida)
+        public async Task<Dividas> CriarDividaAsync(int clienteId, int usuarioId, Dividas novaDivida)
         {
             var cliente = await _session.GetAsync<Clientes>(clienteId);
             if (cliente == null)
                 throw new ArgumentException($"Cliente {clienteId} não encontrado.");
+
+                var usuario = await _session.GetAsync<Usuarios>(usuarioId);
+                if (usuario == null)
+                    throw new ArgumentException($"Usuário {usuarioId} não encontrado.");
 
             var somaEmAberto = _session.Query<Dividas>()
                 .Where(d => d.Cliente.Id == clienteId && !d.Situacao)
@@ -33,6 +37,7 @@ namespace VendaApi.Services
                 );
 
             novaDivida.Cliente = cliente;
+            novaDivida.CriadoPor = usuario;
             novaDivida.DataCriacao = DateTime.UtcNow;
             novaDivida.Situacao = false;
             novaDivida.DataPagamento = null;

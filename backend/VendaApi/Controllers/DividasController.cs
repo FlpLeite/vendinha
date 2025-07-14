@@ -37,6 +37,8 @@ namespace VendaApi.Controllers
                     ClienteId = d.Cliente.Id,
                     ClienteNome = d.Cliente.NomeCompleto,
                     Id = d.Id,
+                    CriadoPorId = d.CriadoPor.Id,
+                    PagoPorId = d.PagoPor != null ? d.PagoPor.Id : (int?)null,
                     Valor = d.Valor,
                     Situacao = d.Situacao,
                     DataCriacao = d.DataCriacao,
@@ -65,7 +67,7 @@ namespace VendaApi.Controllers
                     Descricao = dto.Descricao
                 };
 
-                var criada = await _clientesService.CriarDividaAsync(clienteId, novaDivida);
+                var criada = await _clientesService.CriarDividaAsync(clienteId, dto.CriadoPorId, novaDivida);
 
                 var resultDto = new DividasDTO
                 {
@@ -76,7 +78,9 @@ namespace VendaApi.Controllers
                     Situacao = criada.Situacao,
                     DataCriacao = criada.DataCriacao,
                     DataPagamento = criada.DataPagamento,
-                    Descricao = criada.Descricao
+                    Descricao = criada.Descricao,
+                    CriadoPorId = criada.CriadoPor.Id,
+                    PagoPorId = criada.PagoPor?.Id
                 };
 
                 return CreatedAtAction(nameof(GetAll), new { clienteId }, resultDto);
@@ -92,7 +96,7 @@ namespace VendaApi.Controllers
         }
 
         [HttpPut("{id}/pagar")]
-        public IActionResult MarcarComoPaga(int clienteId, int id)
+        public IActionResult MarcarComoPaga(int clienteId, int id, [FromQuery] int usuarioId)
         {
             var d = _session.Get<Dividas>(id);
             if (d == null || d.Cliente.Id != clienteId)
@@ -101,8 +105,13 @@ namespace VendaApi.Controllers
             if (d.Situacao)
                 return BadRequest("Dívida já está paga.");
 
+            var usuario = _session.Get<Usuarios>(usuarioId);
+            if (usuario == null)
+                return NotFound($"Usuário {usuarioId} não encontrado.");
+
             d.Situacao = true;
             d.DataPagamento = DateTime.UtcNow;
+            d.PagoPor = usuario;
 
             using var tx = _session.BeginTransaction();
             _session.Update(d);
@@ -113,6 +122,8 @@ namespace VendaApi.Controllers
                 ClienteId = d.Cliente.Id,
                 ClienteNome = d.Cliente.NomeCompleto,
                 Id = d.Id,
+                CriadoPorId = d.CriadoPor.Id,
+                PagoPorId = d.PagoPor?.Id,
                 Valor = d.Valor,
                 Situacao = d.Situacao,
                 DataCriacao = d.DataCriacao,

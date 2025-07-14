@@ -107,3 +107,4 @@ C:\Users\felip\OneDrive\Documentos\Vendinha\backend\VendaApi\obj\Debug\net8.0\rj
 C:\Users\felip\OneDrive\Documentos\Vendinha\backend\VendaApi\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
 C:\Users\felip\OneDrive\Documentos\Vendinha\backend\VendaApi\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\felip\OneDrive\Documentos\Vendinha\backend\VendaApi\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\Users\felip\OneDrive\Documentos\Vendinha\backend\VendaApi\bin\Debug\net8.0\BCrypt.Net-Next.dll
