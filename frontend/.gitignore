@@ -13,6 +13,10 @@ lerna-debug.log*
 /backend/VendaApi/bin/
 /backend/VendaApi/obj/
 
+appsettings.Development.json
+appsettings.json
+
+
 node_modules
 dist
 dist-ssr
