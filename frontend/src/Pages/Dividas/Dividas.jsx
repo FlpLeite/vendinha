@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from 'react'
+import React, { useMemo, useEffect, useState, useRef } from 'react'
 import { Check, Search } from 'lucide-react'
 import useDebounce from '../../hooks/useDebounce'
 import { fetchDashboardStats } from '../../services/dashboardService'
@@ -9,6 +9,7 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
     const [dividas, setDividas] = useState([])
     const [page, setPage] = useState(1)
     const [hasMore, setHasMore] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [buscaInput, setBuscaInput] = useState('')
     const busca = useDebounce(buscaInput, 500)
     const [filtro, setFiltro] = useState('todas')
@@ -18,6 +19,8 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
         valorTotalPendente: 0,
         valorTotalPago: 0,
     })
+    const containerRef = useRef(null)
+    const sentinelRef = useRef(null)
 
     useEffect(() => {
         async function loadStats() {
@@ -38,6 +41,7 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
         }
         async function loadDividas() {
             try {
+                setLoading(true)
                 const res = await fetch(`${baseUrl}/api/dividas?page=${page}`)
                 const data = await res.json()
                 if (res.ok) {
@@ -47,6 +51,8 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
                 }
             } catch (err) {
                 console.error('Erro ao buscar dívidas:', err)
+            } finally {
+            setLoading(false)
             }
         }
         loadStats()
@@ -54,6 +60,26 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
     }, [page, refreshKey])
 
     const handleCarregarMais = () => setPage(p => p + 1)
+
+    useEffect(() => {
+        const container = containerRef.current
+        const sentinel = sentinelRef.current
+        if (!container || !sentinel) return
+
+        const observer = new IntersectionObserver(
+            entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && hasMore && !loading) {
+                        handleCarregarMais()
+                    }
+                })
+            },
+            { root: container }
+        )
+
+        observer.observe(sentinel)
+        return () => observer.disconnect()
+    }, [hasMore, loading])
 
     const ordenadas = useMemo(
         () =>
@@ -119,7 +145,10 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
                     className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-emerald-500 text-white placeholder-gray-400 duration-200"
                 />
             </div>
-            <div className="overflow-x-auto overflow-y-auto max-h-[60vh]">
+            <div
+                className="overflow-x-auto overflow-y-auto max-h-[60vh] scrollbar-hide"
+                ref={containerRef}
+            >
                 <table className="min-w-full bg-gray-800 rounded-lg overflow-hidden border border-gray-700">
                     <thead className="bg-gray-700 text-left">
                     <tr>
@@ -190,16 +219,7 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
                     </tr>
                     </tfoot>
                 </table>
-                {hasMore && (
-                    <div className="p-4 text-center">
-                        <button
-                            onClick={handleCarregarMais}
-                            className="px-4 py-2 bg-green-600 rounded hover:bg-green-900"
-                        >
-                            Carregar mais
-                        </button>
-                    </div>
-                )}
+                <div ref={sentinelRef} className="p-2" />
             </div>
         </div>
     )
