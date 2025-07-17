@@ -13,6 +13,7 @@ export default function ClientePerfilModal({
     onMarcarPago,
     onExcluirCliente,
     onAtualizarCliente,
+    onError,
                                            }) {
     const [filtro, setFiltro] = useState('todas')
     const [editando, setEditando] = useState(false)
@@ -112,8 +113,8 @@ export default function ClientePerfilModal({
             setEditando(false)
             if (onAtualizarCliente) onAtualizarCliente(cliente.id, data)
         } else {
-            const msg = typeof data === 'string' ? data : JSON.stringify(data)
-            alert(`Erro ${status}: ${msg}`)
+            const msg = data?.error || (typeof data === 'string' ? data : JSON.stringify(data))
+            if (onError) onError(`Erro ${status}: ${msg}`)
         }
     }
 

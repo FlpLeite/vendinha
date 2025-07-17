@@ -271,6 +271,7 @@ async function handleExcluirCliente(id) {
                 <ClienteForm
                     onSave={handleSalvarCliente}
                     onCancel={() => setMostrarFormCliente(false)}
+                    onError={msg => setErro(msg)}
                 />
             )}
             {mostrarFormDivida && (
@@ -292,6 +293,7 @@ async function handleExcluirCliente(id) {
                     onMarcarPago={handleMarcarPago}
                     onExcluirCliente={handleExcluirCliente}
                     onAtualizarCliente={handleAtualizarCliente}
+                    onError={msg => setErro(msg)}
                 />
             )}
             {erro && (

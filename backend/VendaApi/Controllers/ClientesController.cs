@@ -13,6 +13,13 @@ namespace VendaApi.Controllers
 
         public ClientesController(NHibernate.ISession session) => _session = session;
 
+        private static bool IdadeValida(DateTime dataNascimento)
+        {
+            var hoje = DateTime.Today;
+            var idade = hoje.Year - dataNascimento.Year;
+            if (dataNascimento > hoje.AddYears(-idade)) idade--;
+            return idade >= 10 && idade <= 100;
+        }
 
         [HttpGet]
         public IActionResult GetAll(
@@ -91,6 +98,9 @@ namespace VendaApi.Controllers
             if (!Cpf.Validar(dto.Cpf))
                 return BadRequest(new { error = "CPF inválido de acordo com os padrões." });
 
+            if (!IdadeValida(dto.DataNascimento))
+                return BadRequest(new { error = "Cliente deve ter entre 10 e 100 anos." });
+
             var c = new Clientes
             {
                 NomeCompleto = dto.NomeCompleto,
@@ -114,6 +124,9 @@ namespace VendaApi.Controllers
             if (c == null) return NotFound();
             if (!Cpf.Validar(dto.Cpf))
                 return BadRequest(new { error = "CPF inválido de acordo com os padrões." });
+
+            if (!IdadeValida(dto.DataNascimento))
+                return BadRequest(new { error = "Cliente deve ter entre 10 e 100 anos." });
 
             c.NomeCompleto = dto.NomeCompleto;
             c.Cpf = dto.Cpf;

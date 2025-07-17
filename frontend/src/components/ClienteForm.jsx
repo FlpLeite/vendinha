@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {criarCliente} from '../services/clienteService';
 
-export default function ClienteForm({onSave, onCancel}) {
+export default function ClienteForm({onSave, onCancel, onError }) {
     const [nomeCompleto, setNomeCompleto] = useState('');
     const [cpf, setCpf] = useState('');
     const [dataNascimento, setDataNascimento] = useState('');
@@ -15,13 +15,16 @@ export default function ClienteForm({onSave, onCancel}) {
 
         setSubmetendo(true);
         try {
-            const {status, data} = await criarCliente({
-                nomeCompleto, cpf, dataNascimento, email,
+            const { status, data } = await criarCliente({
+                nomeCompleto,
+                cpf,
+                dataNascimento,
+                email,
             });
             if (status === 201 || status === 200) {
                 onSave(data);
-            } else {
-                alert('Erro ao criar cliente');
+            } else if (onError) {
+                onError(data?.error || 'Erro ao criar cliente');
             }
         } catch (err) {
             console.error(err);
