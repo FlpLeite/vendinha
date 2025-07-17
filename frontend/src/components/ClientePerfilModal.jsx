@@ -86,7 +86,6 @@ export default function ClientePerfilModal({
         return true
     })
 
-    const handleOverlayClick = () => onClose()
 
     const handleExcluir = async () => {
         const confirmar = window.confirm('Deseja mesmo excluir esse cliente?')
@@ -120,7 +119,6 @@ export default function ClientePerfilModal({
 
     return (<div
         className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50"
-        onClick={handleOverlayClick}
     >
         <div
             className="bg-gray-800 rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] border border-gray-700 flex flex-col"
