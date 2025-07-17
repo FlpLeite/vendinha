@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {X, ShoppingCart, DollarSign, Calendar} from 'lucide-react';
+import {X, ShoppingCart, DollarSign} from 'lucide-react';
 
 export default function DividaForm({
                                        clienteId,
@@ -10,7 +10,6 @@ export default function DividaForm({
     const [formData, setFormData] = useState({
         descricao: '',
         valor: '',
-        dataCompra: new Date().toISOString().split('T')[0]
     });
     const [errors, setErrors] = useState({});
 
@@ -19,7 +18,6 @@ export default function DividaForm({
         const newErrors = {};
         if (!formData.descricao.trim()) newErrors.descricao = 'Descrição é obrigatória';
         if (!formData.valor || parseFloat(formData.valor) <= 0) newErrors.valor = 'Valor deve ser maior que zero';
-        if (!formData.dataCompra) newErrors.dataCompra = 'Data da compra é obrigatória';
 
         if (Object.keys(newErrors).length) {
             setErrors(newErrors);
@@ -85,21 +83,6 @@ export default function DividaForm({
                             placeholder="0,00"
                         />
                         {errors.valor && <p className="text-red-400 text-sm">{errors.valor}</p>}
-                    </div>
-
-                    <div>
-                        <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2">
-                            <Calendar className="h-4 w-4"/> Data da Compra *
-                        </label>
-                        <input
-                            type="date"
-                            value={formData.dataCompra}
-                            onChange={e => handleChange('dataCompra', e.target.value)}
-                            className={`w-full px-3 py-2 bg-gray-700 border rounded-lg text-white ${
-                                errors.dataCompra ? 'border-red-500' : 'border-gray-600'
-                            }`}
-                        />
-                        {errors.dataCompra && <p className="text-red-400 text-sm">{errors.dataCompra}</p>}
                     </div>
 
                     <div className="flex gap-3 pt-4">

@@ -341,20 +341,28 @@ export default function ClientePerfilModal({
                             </span>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2 text-sm text-gray-400 ml-12">
-                                        <Calendar className="h-4 w-4"/>
-                                        <div>
-                                            {item.tipo === 'divida' && item.status === 'pago'
-                                                ? 'Pago em:'
-                                                : item.tipo === 'pagamento'
-                                                    ? 'Pago em:'
-                                                    : 'Dívida feita em:'}
-                                        </div>
-                                        {item.tipo === 'divida' && item.status === 'pago'
-                                            ? new Date(item.dataPagamento).toLocaleDateString('pt-BR')
-                                            : item.tipo === 'pagamento'
-                                                ? new Date(item.data).toLocaleDateString('pt-BR')
-                                                : new Date(item.dataCriacao).toLocaleDateString('pt-BR')}
+                                    <div className="flex flex-col gap-1 text-sm text-gray-400 ml-12">
+                                        {item.tipo === 'divida' && (
+                                            <div className="flex items-center gap-2">
+                                                <Calendar className="h-4 w-4"/>
+                                                <div>Dívida feita em:</div>
+                                                {new Date(item.dataCriacao ?? item.data).toLocaleDateString('pt-BR')}
+                                            </div>
+                                        )}
+                                        {(item.tipo === 'divida' && item.status === 'pago') && (
+                                            <div className="flex items-center gap-2">
+                                                <Calendar className="h-4 w-4"/>
+                                                <div>Pago em:</div>
+                                                {new Date(item.dataPagamento).toLocaleDateString('pt-BR')}
+                                            </div>
+                                        )}
+                                        {item.tipo === 'pagamento' && (
+                                            <div className="flex items-center gap-2">
+                                                <Calendar className="h-4 w-4"/>
+                                                <div>Pago em:</div>
+                                                {new Date(item.data).toLocaleDateString('pt-BR')}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                                 <div className="text-right ml-4">
