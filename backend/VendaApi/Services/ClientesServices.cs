@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using NHibernate;
 using VendaApi.Models;
-using VendaApi.Services;
 
 namespace VendaApi.Services
 {

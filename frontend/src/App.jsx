@@ -21,7 +21,6 @@ export default function App() {
     const [telaAtiva, setTelaAtiva] = useState('dashboard')
     const [clientes, setClientes] = useState([])
     const [dividas, setDividas] = useState([])
-    const [pagamentos] = useState([])
     const [mostrarFormCliente, setMostrarFormCliente] = useState(false)
     const [mostrarFormDivida, setMostrarFormDivida] = useState(false)
     const [clienteFormDivida, setClienteFormDivida] = useState('')
@@ -288,11 +287,8 @@ async function handleExcluirCliente(id) {
                 <ClientePerfilModal
                     cliente={clienteSelecionado}
                     dividas={dividas}
-                    pagamentos={pagamentos}
                     onClose={() => setPerfilAberto(false)}
                     onNovaDivida={handleNovaDivida}
-                    onNovoPagamento={() => {
-                    }}
                     onMarcarPago={handleMarcarPago}
                     onExcluirCliente={handleExcluirCliente}
                     onAtualizarCliente={handleAtualizarCliente}

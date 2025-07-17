@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VendaApi.Models;
 using VendaApi.Models.Dtos;
-using System.Linq;
-using VendaApi.Controllers;
 using CpfCnpjLibrary;
 
 namespace VendaApi.Controllers

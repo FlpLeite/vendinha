@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import useDebounce from '../../hooks/useDebounce'
-import {Search, Plus, User, Phone, MapPin, Calendar} from 'lucide-react'
+import {Search, Plus, User, Calendar} from 'lucide-react'
 import {listarClientes} from '../../services/clienteService'
 
 export default function ClientesList({onNovoCliente, onClienteSelect, refreshKey}) {
@@ -36,11 +36,21 @@ export default function ClientesList({onNovoCliente, onClienteSelect, refreshKey
     }, [busca, page, refreshKey])
 
     const filtrados = clientes.filter(c =>
-        c.nomeCompleto.toLowerCase().includes(busca.toLowerCase()) ||
-        (c.telefone && c.telefone.includes(busca))
+        c.nomeCompleto.toLowerCase().includes(busca.toLowerCase())
     )
     const getValorPendente = id => clientes
         .find(c => c.id === id)?.totalDebt ?? 0
+
+    const calcularIdade = data => {
+        const hoje = new Date()
+        const nascimento = new Date(data)
+        let idade = hoje.getFullYear() - nascimento.getFullYear()
+        const mes = hoje.getMonth() - nascimento.getMonth()
+        if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+            idade--
+        }
+        return idade
+    }
 
     return (<div className="space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -58,7 +68,7 @@ export default function ClientesList({onNovoCliente, onClienteSelect, refreshKey
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5"/>
             <input
                 type="text"
-                placeholder="Buscar cliente por nome ou telefone..."
+                placeholder="Buscar cliente por nome"
                 value={buscaInput}
                 onChange={e => {
                     setBuscaInput(e.target.value)
@@ -86,23 +96,13 @@ export default function ClientesList({onNovoCliente, onClienteSelect, refreshKey
                         Em débito
                       </span>)}
                         </div>
-
                         <h3 className="text-lg font-semibold text-white mb-2">
                             {c.nomeCompleto}
                         </h3>
                         <div className="space-y-2 mb-4 text-gray-400 text-sm">
-                            {c.telefone && (<div className="flex items-center gap-2">
-                                <Phone className="h-4 w-4"/>
-                                {c.telefone}
-                            </div>)}
-                            {c.endereco && (<div className="flex items-center gap-2">
-                                <MapPin className="h-4 w-4"/>
-                                {c.endereco}
-                            </div>)}
                             <div className="flex items-center gap-2">
                                 <Calendar className="h-4 w-4"/>
-                                Data de nascimento{' '}
-                                {new Date(c.dataNascimento).toLocaleDateString('pt-BR')}
+                                {c.age ?? calcularIdade(c.dataNascimento)} anos
                             </div>
                         </div>
 
