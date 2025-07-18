@@ -26,7 +26,7 @@ namespace VendaApi.Controllers
         [FromQuery] int page = 1,
         [FromQuery] string? name = null)
         {
-            const int pageSize = 9;
+            const int pageSize = 10;
 
             var query = _session.Query<Clientes>();
             if (!string.IsNullOrWhiteSpace(name))
@@ -101,6 +101,9 @@ namespace VendaApi.Controllers
             if (!IdadeValida(dto.DataNascimento))
                 return BadRequest(new { error = "Cliente deve ter entre 10 e 100 anos." });
 
+            if (_session.Query<Clientes>().Any(c => c.Cpf == dto.Cpf))
+                return BadRequest(new { error = "Este CPF já pertence a um cliente." });
+
             var c = new Clientes
             {
                 NomeCompleto = dto.NomeCompleto,
@@ -127,6 +130,9 @@ namespace VendaApi.Controllers
 
             if (!IdadeValida(dto.DataNascimento))
                 return BadRequest(new { error = "Cliente deve ter entre 10 e 100 anos." });
+
+            if (_session.Query<Clientes>().Any(cl => cl.Cpf == dto.Cpf && cl.Id != id))
+                return BadRequest(new { error = "Este CPF já pertence a um cliente." });
 
             c.NomeCompleto = dto.NomeCompleto;
             c.Cpf = dto.Cpf;

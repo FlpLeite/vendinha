@@ -211,7 +211,7 @@ async function handleExcluirCliente(id) {
     return (
         <div className="min-h-screen bg-gray-900">
             <header className="bg-gray-800 shadow-lg border-b border-gray-700">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="w-full px-8 sm:px-12 lg:px-16 mx-auto">
                     <div className="flex justify-between items-center h-16">
                         <div className="flex items-center gap-3">
                             <div className="bg-emerald-600 p-2 rounded-lg shadow-lg">
@@ -254,7 +254,7 @@ async function handleExcluirCliente(id) {
                 </div>
             </header>
 
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <main className="w-full mx-auto px-8 sm:px-12 lg:px-16 py-8">
                 {telaAtiva === 'dashboard' && (
                     <Dividas onMarcarPago={handleMarcarPago} refreshKey={refreshDividas} />
                 )}

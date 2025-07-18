@@ -19,7 +19,7 @@ export default function ClientesList({onNovoCliente, onClienteSelect, refreshKey
             if (resultado.status === 200) {
                 const json = resultado.data
                 const items = json.items ?? json.Items ?? []
-                const size = json.pageSize ?? json.PageSize ?? 9
+                const size = json.pageSize ?? json.PageSize ?? 10
                 setClientes(items)
                 setTotalDebtSum(json.totalDebtSum ?? json.TotalDebtSum ?? 0)
                 setIsLastPage(items.length < size)
@@ -79,7 +79,7 @@ export default function ClientesList({onNovoCliente, onClienteSelect, refreshKey
         </div>
 
         {loading ? (<p className="text-white">Carregando clientes…</p>) : (<>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
                 {filtrados.map(c => {
                     const pendente = c.totalDebt ?? getValorPendente(c.id)
                     return (<div
