@@ -23,6 +23,12 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
     const sentinelRef = useRef(null)
 
     useEffect(() => {
+        setDividas([])
+        setPage(1)
+        setHasMore(true)
+    }, [refreshKey])
+
+    useEffect(() => {
         async function loadStats() {
             try {
                 const { status, data } = await fetchDashboardStats()
@@ -60,6 +66,19 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
     }, [page, refreshKey])
 
     const handleCarregarMais = () => setPage(p => p + 1)
+
+    const handleMarcarPago = async (clienteId, id) => {
+        const res = await onMarcarPago(clienteId, id)
+        if (res?.status === 200) {
+            setDividas(prev =>
+                prev.map(d =>
+                    (d.id ?? d.Id) === id
+                        ? { ...d, situacao: true, dataPagamento: res.data.dataPagamento }
+                        : d
+                )
+            )
+        }
+    }
 
     useEffect(() => {
         const container = containerRef.current
@@ -186,7 +205,7 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
                             <td className="px-4 py-2 text-center">
                                 {!divida.situacao && (
                                     <button
-                                        onClick={() => onMarcarPago(divida.clienteId ?? divida.ClienteId, divida.id ?? divida.Id)}
+                                        onClick={() => handleMarcarPago(divida.clienteId ?? divida.ClienteId, divida.id ?? divida.Id)}
                                         title="Marcar como pago"
                                         className="hover:text-green-400"
                                     >
@@ -208,16 +227,6 @@ export default function Dividas({ onMarcarPago, refreshKey }) {
                         </tr>
                     )}
                     </tbody>
-
-                    <tfoot className="bg-gray-700 font-semibold">
-                    <tr>
-                        <td className="px-4 py-2 text-right" colSpan={2}>Total:</td>
-                        <td className="px-4 py-2 text-right" colSpan={3}>
-                            R$ {total.toFixed(2)}
-                        </td>
-                        <td />
-                    </tr>
-                    </tfoot>
                 </table>
                 <div ref={sentinelRef} className="p-2" />
             </div>

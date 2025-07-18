@@ -8,6 +8,21 @@ export default function ClienteForm({onSave, onCancel, onError }) {
     const [email, setEmail] = useState(null);
     const [submetendo, setSubmetendo] = useState(false);
 
+    const formatarCpf = valor => {
+        const digits = valor.replace(/\D/g, '').slice(0, 11);
+        const parts = [digits.slice(0, 3), digits.slice(3, 6), digits.slice(6, 9), digits.slice(9, 11)];
+        let formatted = parts[0];
+        if (digits.length > 3) formatted += '.' + parts[1];
+        if (digits.length > 6) formatted += '.' + parts[2];
+        if (digits.length > 9) formatted += '-' + parts[3];
+        return formatted;
+    };
+
+    const handleCpfChange = e => {
+        const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
+        setCpf(digits);
+    };
+
     const handleSubmit = async e => {
         e.preventDefault();
         const form = e.target;
@@ -65,11 +80,11 @@ export default function ClienteForm({onSave, onCancel, onError }) {
                 <input
                     type="text"
                     required
-                    pattern="\d{11}"
-                    title="Exatamente 11 números"
-                    maxLength={11}
-                    value={cpf}
-                    onChange={e => setCpf(e.target.value.slice(0, 11))}
+                    pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
+                    title="Formato 000.000.000-00"
+                    maxLength={14}
+                    value={formatarCpf(cpf)}
+                    onChange={handleCpfChange}
                     className="w-full bg-gray-700 p-2 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
             </div>

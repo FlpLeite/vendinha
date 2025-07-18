@@ -145,6 +145,7 @@ export default function App() {
             const msg = typeof data === 'string' ? data : JSON.stringify(data)
             setErro(`Erro ${status}: ${msg}`)
         }
+        return { status, data }
     }
 
     function handleNovaDivida(clienteId) {
@@ -210,7 +211,7 @@ async function handleExcluirCliente(id) {
 
     return (
         <div className="min-h-screen bg-gray-900">
-            <header className="bg-gray-800 shadow-lg border-b border-gray-700">
+            <header className="bg-gray-800 shadow-lg border-gray-700">
                 <div className="w-full px-8 sm:px-12 lg:px-16 mx-auto">
                     <div className="flex justify-between items-center h-16">
                         <div className="flex items-center gap-3">
@@ -220,9 +221,8 @@ async function handleExcluirCliente(id) {
                             <div>
                                 <h1 className="text-xl font-bold text-white">
                                     <span className="sm:inline hidden">Vendinha do Zé</span>
-                                    <span className="inline sm:hidden">Zé</span>
                                 </h1>
-                                <p className="text-sm text-gray-300 sm:block hidden">Controle de Contas</p>
+                                <p className="text-sm text-gray-300 sm:block hidden">Controle de fiados</p>
                             </div>
                         </div>
                         <nav className="flex gap-1 items-center">
