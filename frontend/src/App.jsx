@@ -218,8 +218,11 @@ async function handleExcluirCliente(id) {
                                 <Store className="h-6 w-6 text-white"/>
                             </div>
                             <div>
-                                <h1 className="text-xl font-bold text-white">Vendinha do Zé</h1>
-                                <p className="text-sm text-gray-300">Controle de Contas</p>
+                                <h1 className="text-xl font-bold text-white">
+                                    <span className="sm:inline hidden">Vendinha do Zé</span>
+                                    <span className="inline sm:hidden">Zé</span>
+                                </h1>
+                                <p className="text-sm text-gray-300 sm:block hidden">Controle de Contas</p>
                             </div>
                         </div>
                         <nav className="flex gap-1 items-center">
