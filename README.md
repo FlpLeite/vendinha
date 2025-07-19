@@ -6,7 +6,8 @@
 
 O objetivo deste projeto é o controle de contas de clientes de uma vendinha, facilitando o cadastro, consulta e gerenciamento de dívidas que antes eram anotadas no papel. O sistema permite que o dono da venda ou atendente cadastre clientes, registre dívidas, marque pagamentos e acompanhe o quanto cada cliente deve.
 
-> **Acesse o sistema online:**
+## Deploy DigitalOcean (Droplet Ubuntu 22.04, Nginx, Node, .NET)
+> **Deploy hospedado no seguinte domínio:**
 > [http://flprojects.me](http://flprojects.me)
 
 ---
