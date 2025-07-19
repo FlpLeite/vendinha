@@ -1,4 +1,6 @@
 # Vendinha
+<img width="1863" height="970" alt="image" src="https://github.com/user-attachments/assets/c75fd1ea-21b3-4008-98bd-d6459af05477" />
+
 
 **Sistema de controle de vendas fiado**
 
