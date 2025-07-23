@@ -79,4 +79,4 @@ A documentação completa da API está disponível em:
 5. **Acesse** via [http://localhost:5173](http://localhost:5173) ou [http://flprojects.me](http://flprojects.me)
 
 ---
-
+![Alt](https://repobeats.axiom.co/api/embed/0036e5e2b425d90adf244def995ac6e01ceee175.svg "Repobeats analytics image")
